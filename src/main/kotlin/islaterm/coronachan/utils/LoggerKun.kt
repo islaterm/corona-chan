@@ -1,6 +1,8 @@
 package islaterm.coronachan.utils
 
 import org.apache.logging.log4j.Level
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 import org.apache.logging.log4j.core.Filter
 import org.apache.logging.log4j.core.LoggerContext
 import org.apache.logging.log4j.core.appender.ConsoleAppender
@@ -13,12 +15,43 @@ import org.apache.logging.log4j.core.config.builder.api.ConfigurationBuilderFact
 import org.apache.logging.log4j.core.config.builder.impl.BuiltConfiguration
 import org.apache.logging.log4j.core.config.plugins.Plugin
 import java.net.URI
+import kotlin.properties.ReadOnlyProperty
+import kotlin.reflect.KProperty
 
 /**
- * Custom logging configuration factory for Corona-chan.
+ * Corona-chan's childhood friend.
+ *
+ * Since Corona-chan isn't really talkative Logger-kun speaks for her most of the time, he's really good at expressing
+ * his (and her) ideas.
+ * But he's never been able to express his feelings for Corona.
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version 1.0.1-a.3
+ * @version 1.0.1-a.4
+ * @since 1.0
+ */
+class LoggerKun<in R : Any> : ReadOnlyProperty<R, Logger> {
+  var isConfigured = false
+
+  /**
+   * Returns the value of the property for the given object.
+   * @param thisRef the object for which the value is requested.
+   * @param property the metadata for the property.
+   * @return the property value.
+   */
+  override fun getValue(thisRef: R, property: KProperty<*>): Logger {
+    if (!isConfigured) {
+      ConfigurationFactory.setConfigurationFactory(LoggerKunConfigFactory())
+      isConfigured = true
+    }
+    return LogManager.getLogger(thisRef.javaClass)
+  }
+}
+
+/**
+ * Custom logging configuration factory for Logger-kun.
+ *
+ * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
+ * @version 1.0.1-a.4
  * @since 1.0
  */
 @Plugin(name = "LoggerKunConfigFactory", category = ConfigurationFactory.CATEGORY)
@@ -47,7 +80,11 @@ class LoggerKunConfigFactory : ConfigurationFactory() {
 }
 
 /**
- * Sets up the custom configuration for Corona-chan.
+ * Sets up the custom configuration for Logger-kun.
+ *
+ * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
+ * @version 1.0.1-a.4
+ * @since 1.0
  */
 fun createConfiguration(name: String, builder: ConfigurationBuilder<BuiltConfiguration>): Configuration =
   builder.setConfigurationName(name)

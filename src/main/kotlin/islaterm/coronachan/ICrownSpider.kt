@@ -1,16 +1,13 @@
 package islaterm.coronachan
 
-import islaterm.coronachan.utils.LoggerKunConfigFactory
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
-import org.apache.logging.log4j.core.config.ConfigurationFactory.setConfigurationFactory
+import islaterm.coronachan.utils.LoggerKun
 import org.jsoup.Jsoup
 
 /**
  * Common interface for the Corona-Virus updates web crawlers.
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version 1.0.1-a.3
+ * @version 1.0.1-a.4
  * @since 1.0
  */
 interface ICrownSpider {
@@ -21,12 +18,7 @@ interface ICrownSpider {
 }
 
 abstract class AbstractSpider : ICrownSpider {
-  val logger: Logger
-
-  init {
-    setConfigurationFactory(LoggerKunConfigFactory())
-    logger = LogManager.getLogger(javaClass)
-  }
+  protected val logger by LoggerKun()
 }
 
 /**
