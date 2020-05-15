@@ -12,7 +12,7 @@ plugins {
 }
 
 group = "com.github.islaterm"
-version = "1.0.1-ALPHA.1"
+version = "1.0.1-ALPHA.2"
 
 repositories {
   mavenCentral()
@@ -26,6 +26,8 @@ dependencies {
   implementation(group = "org.jsoup", name = "jsoup", version = "1.13.1")
   implementation(group = "tech.tablesaw", name = "tablesaw-core", version = "0.38.1")
   implementation(group = "tech.tablesaw", name = "tablesaw-jsplot", version = "0.38.1")
+  implementation(group = "org.apache.logging.log4j", name = "log4j-api", version = "2.13.3")
+  implementation(group = "org.apache.logging.log4j", name = "log4j-core", version = "2.13.3")
   testImplementation(group = "org.junit.jupiter", name = "junit-jupiter-api", version = "5.7.0-M1")
   testRuntimeOnly(group = "org.junit.jupiter", name = "junit-jupiter-engine", version = "5.7.0-M1")
 }
@@ -43,7 +45,7 @@ tasks {
     dependsOn(configurations.runtimeClasspath)
     from({
       configurations.runtimeClasspath.get().filter {
-        it.name.endsWith("jar")
+        it.name.endsWith("jar") && !it.name.contains("dispatcher-4.4.0.jar")
       }.map {
         zipTree(it)
       }
