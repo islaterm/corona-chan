@@ -24,7 +24,7 @@ const val ROW_CELL = "td"
  * Common interface for the Corona-Virus updates web crawlers.
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version 1.0.1-b.1
+ * @version 1.0.1-b.3
  * @since 1.0
  */
 interface ICrownSpider {
@@ -40,6 +40,10 @@ abstract class AbstractSpider : ICrownSpider {
 
 /**
  * Web crawler for official information of the MINSAL.
+ *
+ * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
+ * @version 1.0.1-b.3
+ * @since 1.0
  */
 class MinsalSpider : AbstractSpider() {
   lateinit var table: Table
@@ -71,24 +75,24 @@ class MinsalSpider : AbstractSpider() {
   fun plot() {
     val title = "Casos totales acumulados"
     val layout = Layout.builder()
-      .title(title)
+      .title("$title ${LocalDate.now()}")
       .build()
     val trace = BarTrace.builder(table.categoricalColumn(0), table.numberColumn(1))
       .build()
     val page =
       Page.pageBuilder(Figure(layout, trace), title.replace(Pattern.compile("[^A-Za-z0-9]").toRegex(), "_")).build()
     syncOutput(
-      "$page",
+      "$page".replace(Pattern.compile("[\\r\\n]").toRegex(), "\\r\\n"),
       "${URLEncoder.encode(title, Charset.forName("UTF-8"))}.html",
       "../../islaterm.github.io"
     )
   }
 
   private fun syncOutput(content: String, filename: String, root: String) {
-    val indexText = File("src/main/resources/template.html").readText().replace("~today~", "${LocalDateTime.now()}")
-    val output = File("$root/$filename")
+    val indexText = File("src/main/resources/template.md").readText().replace("~today~", "${LocalDateTime.now()}")
+    val output = File("$root/corona-chan/$filename")
     output.writeText(content)
-    File("$root/index.html").writeText(indexText)
+    File("$root/index.md").writeText(indexText)
     val runtime = Runtime.getRuntime()
     val os = System.getProperty("os.name")
     val process = when {
@@ -100,7 +104,6 @@ class MinsalSpider : AbstractSpider() {
     BufferedReader(InputStreamReader(process.errorStream)).lines()
       .forEach { logger.error(it) }
   }
-
 }
 
 fun main() {
