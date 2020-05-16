@@ -12,11 +12,15 @@ plugins {
 }
 
 group = "com.github.islaterm"
-version = "1.0.1-ALPHA.2"
+version = "1.0.1-BETA.1"
 
 repositories {
   mavenCentral()
-  maven(url = "https://jitpack.io")
+  jcenter()
+  maven("https://dl.bintray.com/mipt-npm/dataforge")
+  maven("https://dl.bintray.com/mipt-npm/scientifik")
+  maven("https://dl.bintray.com/kotlin/ktor/")
+  maven("https://jitpack.io")
 }
 
 dependencies {
