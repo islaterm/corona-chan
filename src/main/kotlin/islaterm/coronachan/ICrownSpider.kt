@@ -19,7 +19,7 @@ const val ROW_CELL = "td"
  * Common interface for the Corona-Virus updates web crawlers.
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version 1.0.2-b.1
+ * @version 1.0.2-b.2
  * @since 1.0
  */
 interface ICrownSpider {
@@ -37,7 +37,7 @@ abstract class AbstractSpider : ICrownSpider {
  * Web crawler for official information of the MINSAL.
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version 1.0.2-b.1
+ * @version 1.0.2-b.2
  * @since 1.0
  */
 class MinsalSpider : AbstractSpider() {
@@ -116,7 +116,6 @@ class MinsalSpider : AbstractSpider() {
       .replace("~graphics~", graphicsLinks)
       .replace("~footnote~", footnote)
     coronaChanVue.writeText(template)
-    syncOutput()
   }
 
   private fun outputToFile(content: String, filename: String) {
@@ -124,7 +123,7 @@ class MinsalSpider : AbstractSpider() {
     output.writeText(content)
   }
 
-  private fun syncOutput() {
+  fun syncOutput() {
     val runtime = Runtime.getRuntime()
     val os = System.getProperty("os.name")
     val process = when {
@@ -148,4 +147,5 @@ fun main() {
   val spider = MinsalSpider()
   spider.scrape()
   spider.generatePlots()
+//  spider.syncOutput()
 }
