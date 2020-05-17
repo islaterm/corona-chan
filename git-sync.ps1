@@ -1,12 +1,15 @@
 <# Version 1.2.2 #>
 $originalLocation = Get-Location
-Set-Location ..\..\islaterm.github.io
+Set-Location ..\..\corona-chan
 
-git.exe fetch
+npx prettier --vue-indent-script-and-style ./**/*.vue
+npx prettier ./**/*.html
+
+git.exe fetch heroku master
 git.exe add .
 git.exe commit -m "Updated files"
-git.exe pull
-git.exe push
+git.exe pull heroku master
+git.exe push heroku master
 
 Set-Location $originalLocation
 exit
