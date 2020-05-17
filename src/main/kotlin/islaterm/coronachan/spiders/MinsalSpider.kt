@@ -12,7 +12,7 @@ import java.util.regex.Pattern
  * Web crawler for official information of the MINSAL.
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version 1.0.2-rc.1
+ * @version 1.0.3-rc.1
  * @since 1.0
  */
 class MinsalSpider : AbstractSpider() {
@@ -102,6 +102,8 @@ class MinsalSpider : AbstractSpider() {
     logger.info("Minsal spider is generating the plots")
     var graphicsLinks = ""
     val xData = categories.dropLast(1)
+    val yesterdayTotals = mutableListOf<Number>()
+    val todayTotals = mutableListOf<Number>()
     for (table in tables) {
       val title = table.replace(Pattern.compile("[\\r\\n]").toRegex(), "")
       val chart = GroupedBarChart(title)
@@ -117,7 +119,15 @@ class MinsalSpider : AbstractSpider() {
           "        >$title</a>\n" +
           "      </li>\n"
       outputToFile(chart.toHtml(), filename)
+      yesterdayTotals.add(yesterdayData[table]!!.last())
+      todayTotals.add(todayData[table]!!.last())
     }
+    val chart = GroupedBarChart("Totales Chile")
+    chart.xData = tables
+    chart.addData(yesterdayTotals, "${LocalDate.now().minusDays(1)}")
+    chart.addData(todayTotals, "${LocalDate.now()}")
+    graphicsLinks += "<a href=\"Totales+Chile.html\" target=\"_blank\" rel=\"noopener\">Totales Chile</a>\n"
+    outputToFile(chart.toHtml(), "Totales+Chile.html")
     val coronaChanVue = File("../../corona-chan/src/components/CoronaChan.vue")
     val template = File("src/main/resources/template.vue").readText()
       .replace("~graphics~", graphicsLinks)
@@ -125,4 +135,5 @@ class MinsalSpider : AbstractSpider() {
     coronaChanVue.writeText(template)
     logger.info("Minsal spider is done with generating the plots")
   }
+
 }
