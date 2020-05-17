@@ -1,7 +1,10 @@
-package islaterm.coronachan.spiders
+package islaterm.coronachan.spiders.minsal
 
+import islaterm.coronachan.spiders.AbstractSpider
+import islaterm.coronachan.spiders.ROW_CELL
+import islaterm.coronachan.spiders.TABLE
+import islaterm.coronachan.spiders.TABLE_ROW
 import islaterm.coronachan.utils.kotly.GroupedBarChart
-import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import java.io.File
 import java.time.LocalDate
@@ -11,10 +14,10 @@ import java.util.regex.Pattern
  * Web crawler for official information of the MINSAL.
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version 1.0.5-b.1
+ * @version 1.0.5-b.2
  * @since 1.0
  */
-class MinsalInfectionsSpider :
+class InfectionsSpider :
   AbstractSpider("https://www.minsal.cl/nuevo-coronavirus-2019-ncov/casos-confirmados-en-chile-covid-19/") {
 
   private lateinit var footnote: String
@@ -23,17 +26,17 @@ class MinsalInfectionsSpider :
   private val todayData = mutableMapOf<String, MutableList<Number>>()
   private val yesterdayData = mutableMapOf<String, MutableList<Number>>()
 
-  override fun concreteScrape(document: Document) {
-    parseTable(document)
-    getFootnote(document)
+
+  override fun concreteScrape() {
+    parseTable()
+    getFootnote()
     parseYesterdayCSV()
   }
 
-  private fun getFootnote(document: Document) {
-    val paragraphs = document.getElementsByTag("p")
-    for (paragraph in paragraphs) {
-      if (paragraph.text().contains('*')) {
-        footnote = "$paragraph"
+  private fun getFootnote() {
+    iterateParagraphs() {
+      if (it.text().contains('*')) {
+        footnote = "$it"
       }
     }
   }
@@ -41,9 +44,11 @@ class MinsalInfectionsSpider :
   /**
    * Generates a .csv file from the MINSAL COVID-19 table.
    */
-  private fun parseTable(document: Document) {
+  private fun parseTable() {
     var csvString = ""
-    for ((idx, row) in document.getElementsByTag(TABLE)[0].getElementsByTag(TABLE_ROW).withIndex()) {
+    for ((idx, row) in document.getElementsByTag(TABLE)[0].getElementsByTag(
+      TABLE_ROW
+    ).withIndex()) {
       if (idx != 0) { // Skips the first row
         val cells = row.getElementsByTag(ROW_CELL)
         csvString += parseCells(cells, idx == 1)

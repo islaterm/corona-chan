@@ -1,8 +1,10 @@
 package islaterm.coronachan.spiders
 
+import islaterm.coronachan.spiders.minsal.InfectionsSpider
 import islaterm.coronachan.utils.LoggerKun
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.nodes.Element
 import java.io.File
 
 const val TABLE_ROW = "tr"
@@ -27,11 +29,12 @@ interface ICrownSpider {
  * Abstract class that contains the common functionalities of all the web crawlers.
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version v1.0.5-b.1
+ * @version v1.0.5-b.2
  * @since 1.0
  */
 abstract class AbstractSpider(private val url: String) : ICrownSpider {
   protected val logger by LoggerKun()
+  protected val document: Document by lazy { Jsoup.connect(url).get() }
 
   protected fun outputToFile(content: String, filename: String) {
     val output = File("../../corona-chan/public/$filename")
@@ -40,19 +43,26 @@ abstract class AbstractSpider(private val url: String) : ICrownSpider {
 
   override fun scrape() {
     logger.info("Scrapping")
-    val document = Jsoup.connect(url).get()
-    concreteScrape(document)
+    concreteScrape()
     logger.info("Done with scrapping")
   }
 
   /**
    * Scrapes the html document to get the desired info.
    */
-  protected abstract fun concreteScrape(document: Document)
+  protected abstract fun concreteScrape()
+
+  /**
+   * Iterates over the paragraphs of the html document and executes an action over them.
+   */
+  protected fun iterateParagraphs(action: (Element) -> Unit) {
+    val paragraphs = document.getElementsByTag("p")
+    paragraphs.forEach { action(it) }
+  }
 }
 
 fun main() {
-  val spider = MinsalInfectionsSpider()
+  val spider = InfectionsSpider()
   spider.scrape()
   spider.generatePlots()
 }
