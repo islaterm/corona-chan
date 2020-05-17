@@ -6,7 +6,7 @@ import java.io.File
  * Common interface that defines the common behaviour of all the elements of a chart.
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version 1.0.2-b.3
+ * @version 1.0.4-rc.1
  * @since 1.0
  */
 interface IKotlyComponent {
@@ -20,15 +20,21 @@ interface IKotlyComponent {
  * Class that represents the layout of a chart.
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version 1.0.2-b.3
+ * @version 1.0.4-rc.1
  * @since 1.0
  */
-data class Layout(val title: String? = null) : IKotlyComponent {
-  override fun compile() = "const layout = {\n" +
-      "  ${if (title != null) {
-        "title: '$title'"
-      } else ""}\n" +
-      "}\n"
+data class Layout(val title: String? = null, val height: String? = null, val width: String? = null) : IKotlyComponent {
+  override fun compile() = "const layout = {${if (title != null) {
+    "title: '$title',"
+  } else ""}${if (height != null) {
+    "height: $height,"
+  } else {
+    ""
+  }}${if (width != null) {
+    "width: $width,"
+  } else {
+    ""
+  }}}\n"
 }
 
 fun main() {
