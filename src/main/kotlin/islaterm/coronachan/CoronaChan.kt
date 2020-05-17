@@ -1,6 +1,6 @@
 package islaterm.coronachan
 
-import islaterm.coronachan.spiders.MinsalSpider
+import islaterm.coronachan.spiders.MinsalInfectionsSpider
 import islaterm.coronachan.utils.LoggerKun
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -12,7 +12,7 @@ import java.io.InputStreamReader
  * Corona-chan is a high-school girl who likes to play with spiders.
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version v1.0.2-rc.1
+ * @version 1.0.5-b.1
  * @since 1.0
  */
 fun main() {
@@ -20,16 +20,24 @@ fun main() {
 }
 
 /**
- * Concrete implementation of Corona-chan.
+ * Corona-chan missed her alarm and is late to school!
+ * In the hurry to get ready she released all of her [spiders] >.<
+ * 
+ * While she was [run]ning to school with a toast in her mouth she met [LoggerKun] who was also late.
+ * Are they going to be able to get to school on time or are they going to get grounded?
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version v1.0.2-rc.1
+ * @version 1.0.5-b.1
  * @since 1.0
  */
 class CoronaChan {
   private val logger by LoggerKun()
-  private val spiders = listOf(MinsalSpider())
+  private val spiders = listOf(MinsalInfectionsSpider())
 
+  /**
+   * Runs all of corona's spiders in parallel to get information about COVID-19 and then syncs the retrieved data with
+   * [corona-chan's website](https://islaterm-corona-chan.herokuapp.com).
+   */
   fun run() {
     runBlocking {
       coroutineScope {

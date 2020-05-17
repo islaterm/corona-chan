@@ -1,54 +1,59 @@
 <template>
-    <div class="corona">
-        <h1>{{ msg }}</h1>
-        <div id="minsal">
-            <h2>Datos MINSAL</h2>
-            <ul>
-                ~graphics~
-            </ul>
-            ~footnote~
-        </div>
+    <v-container>
+        <v-row class="text-center">
+            <v-col cols="12">
+                <v-img :src="require('../assets/CoronaChan.png')" class="my-3" contain height="512" />
+            </v-col>
 
-        <div id="foreword">
-            <h2>Más cosas por venir...</h2>¿Quieres ayudar? ¿Tienes sugerencias?
-            <br/>
-            <a href="https://github.com/islaterm/corona-chan">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Octicons-mark-github.svg/200px-Octicons-mark-github.svg.png"
-                     alt="octocat" height="48" width="48" vspace="2"/>
-            </a>
-            <br/>
-            <a href="https://github.com/islaterm/corona-chan">Visita a Corona-chan en GitHub</a>
-        </div>
-    </div>
+            <v-col class="mb-4">
+                <h1
+                        class="display-2 font-weight-bold mb-3"
+                >Corona-chan te cuenta todo lo que necesitas saber sobre el COVID-19 en Chile</h1>
+            </v-col>
+
+            <v-col class="mb-5" cols="12">
+                <h2 class="headline font-weight-bold mb-3">Datos MINSAL</h2>
+
+                <v-row justify="center">
+                    <a
+                            v-for="(next, i) in minsalCharts"
+                            :key="i"
+                            :href="next.href"
+                            class="subheading mx-3"
+                            target="_blank"
+                    >{{ next.text }}</a>
+                </v-row>
+                <v-row justify="center">
+                    ~footnote~
+                </v-row>
+            </v-col>
+        </v-row>
+        <v-row>
+            <v-col cols="12">
+                <a href="https://github.com/islaterm/corona-chan">
+                    <v-img
+                            src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Octicons-mark-github.svg/200px-Octicons-mark-github.svg.png"
+                            class="my-3"
+                            contain
+                            height="48"
+                    />
+                </a>
+                <p class="text-center">
+                    <a href="https://github.com/islaterm/corona-chan">Visita a Corona-chan en GitHub</a>
+                </p>
+            </v-col>
+        </v-row>
+    </v-container>
 </template>
 
 <script>
-// import CasosTotales from "./CasosTotales.vue";
 export default {
-    name: "CoronaChan",
-    props: {
-        msg: String
-    }
-};
+    name: 'CoronaChan',
+
+    data: () => ({
+        minsalCharts: [
+            ~graphics~
+        ],
+    }),
+}
 </script>
-
-        <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-h3 {
-    margin: 40px 0 0;
-}
-
-ul {
-    list-style-type: none;
-    padding: 0;
-}
-
-li {
-    display: inline-block;
-    margin: 0 10px;
-}
-
-a {
-    color: #42b983;
-}
-</style>

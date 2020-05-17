@@ -1,7 +1,6 @@
 package islaterm.coronachan.spiders
 
 import islaterm.coronachan.utils.kotly.GroupedBarChart
-import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import java.io.File
@@ -12,25 +11,22 @@ import java.util.regex.Pattern
  * Web crawler for official information of the MINSAL.
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version 1.0.3-rc.1
+ * @version 1.0.5-b.1
  * @since 1.0
  */
-class MinsalSpider : AbstractSpider() {
+class MinsalInfectionsSpider :
+  AbstractSpider("https://www.minsal.cl/nuevo-coronavirus-2019-ncov/casos-confirmados-en-chile-covid-19/") {
+
   private lateinit var footnote: String
   private val categories = mutableListOf<String>()
   private val tables = mutableListOf<String>()
   private val todayData = mutableMapOf<String, MutableList<Number>>()
   private val yesterdayData = mutableMapOf<String, MutableList<Number>>()
 
-  // TODO: Change table for lists
-  override fun scrape() {
-    logger.info("MinsalSpider is scrapping")
-    val url = "https://www.minsal.cl/nuevo-coronavirus-2019-ncov/casos-confirmados-en-chile-covid-19/"
-    val document = Jsoup.connect(url).get()
+  override fun concreteScrape(document: Document) {
     parseTable(document)
     getFootnote(document)
     parseYesterdayCSV()
-    logger.info("MinsalSpider is done with scrapping")
   }
 
   private fun getFootnote(document: Document) {
@@ -99,7 +95,7 @@ class MinsalSpider : AbstractSpider() {
   }
 
   fun generatePlots() {
-    logger.info("Minsal spider is generating the plots")
+    logger.info("MINSAL spider is generating the plots")
     var graphicsLinks = ""
     val xData = categories.dropLast(1)
     val yesterdayTotals = mutableListOf<Number>()
@@ -111,13 +107,7 @@ class MinsalSpider : AbstractSpider() {
       chart.addData(yesterdayData[table]!!.dropLast(1), "${LocalDate.now().minusDays(1)}")
       chart.addData(todayData[table]!!.dropLast(1), "${LocalDate.now()}")
       val filename = "$title.html".replace(Pattern.compile("[*:%]").toRegex(), "").replace(" ", "_")
-      graphicsLinks += "      <li>\n" +
-          "        <a\n" +
-          "          href=\"$filename\"\n" +
-          "          target=\"_blank\"\n" +
-          "          rel=\"noopener\"\n" +
-          "        >$title</a>\n" +
-          "      </li>\n"
+      graphicsLinks += "{ text: '$title', href: '$filename' },\n"
       outputToFile(chart.toHtml(), filename)
       yesterdayTotals.add(yesterdayData[table]!!.last())
       todayTotals.add(todayData[table]!!.last())
@@ -126,14 +116,13 @@ class MinsalSpider : AbstractSpider() {
     chart.xData = tables
     chart.addData(yesterdayTotals, "${LocalDate.now().minusDays(1)}")
     chart.addData(todayTotals, "${LocalDate.now()}")
-    graphicsLinks += "<a href=\"Totales+Chile.html\" target=\"_blank\" rel=\"noopener\">Totales Chile</a>\n"
+    graphicsLinks += "{href: 'Totales+Chile.html', text: 'Totales Chile'}\n"
     outputToFile(chart.toHtml(), "Totales+Chile.html")
     val coronaChanVue = File("../../corona-chan/src/components/CoronaChan.vue")
     val template = File("src/main/resources/template.vue").readText()
       .replace("~graphics~", graphicsLinks)
       .replace("~footnote~", footnote)
     coronaChanVue.writeText(template)
-    logger.info("Minsal spider is done with generating the plots")
+    logger.info("MINSAL spider is done with generating the plots")
   }
-
 }
