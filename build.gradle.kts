@@ -12,7 +12,7 @@ plugins {
 }
 
 group = "com.github.islaterm"
-version = "1.0.1-BETA.1"
+version = "1.0.2-RELEASE.1"
 
 repositories {
   mavenCentral()

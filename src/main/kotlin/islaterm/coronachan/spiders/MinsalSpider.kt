@@ -12,7 +12,7 @@ import java.util.regex.Pattern
  * Web crawler for official information of the MINSAL.
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version 1.0.2-b.4
+ * @version 1.0.2-rc.1
  * @since 1.0
  */
 class MinsalSpider : AbstractSpider() {
@@ -29,6 +29,7 @@ class MinsalSpider : AbstractSpider() {
     val document = Jsoup.connect(url).get()
     parseTable(document)
     getFootnote(document)
+    parseYesterdayCSV()
     logger.info("MinsalSpider is done with scrapping")
   }
 
@@ -47,7 +48,7 @@ class MinsalSpider : AbstractSpider() {
   private fun parseTable(document: Document) {
     var csvString = ""
     for ((idx, row) in document.getElementsByTag(TABLE)[0].getElementsByTag(TABLE_ROW).withIndex()) {
-      if (idx != 0 && idx != row.childrenSize() - 1) { // Skips the first row
+      if (idx != 0) { // Skips the first row
         val cells = row.getElementsByTag(ROW_CELL)
         csvString += parseCells(cells, idx == 1)
       }
@@ -55,6 +56,22 @@ class MinsalSpider : AbstractSpider() {
     val date = LocalDate.now()
     val output = File(".\\src\\main\\resources\\minsal_$date.csv")
     output.writeText(csvString)
+  }
+
+  private fun parseYesterdayCSV() {
+    val date = LocalDate.now().minusDays(1)
+    File(".\\src\\main\\resources\\minsal_$date.csv").readLines().forEachIndexed { rowIdx, line ->
+      line.split(",").forEachIndexed { cellIdx, cell ->
+        if (cellIdx != 0) {
+          if (rowIdx == 0) {
+            yesterdayData[tables[cellIdx - 1]] = mutableListOf()
+          } else {
+            yesterdayData[tables[cellIdx - 1]]?.add(cell.toDouble())
+          }
+        }
+      }
+
+    }
   }
 
   /**
@@ -89,6 +106,7 @@ class MinsalSpider : AbstractSpider() {
       val title = table.replace(Pattern.compile("[\\r\\n]").toRegex(), "")
       val chart = GroupedBarChart(title)
       chart.xData = xData
+      chart.addData(yesterdayData[table]!!.dropLast(1), "${LocalDate.now().minusDays(1)}")
       chart.addData(todayData[table]!!.dropLast(1), "${LocalDate.now()}")
       val filename = "$title.html".replace(Pattern.compile("[*:%]").toRegex(), "").replace(" ", "_")
       graphicsLinks += "      <li>\n" +
