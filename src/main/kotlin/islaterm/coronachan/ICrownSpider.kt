@@ -147,5 +147,5 @@ fun main() {
   val spider = MinsalSpider()
   spider.scrape()
   spider.generatePlots()
-//  spider.syncOutput()
+  spider.syncOutput()
 }

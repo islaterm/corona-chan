@@ -36,9 +36,6 @@ class BarChart(private val title: String) : IKotlyComponent {
       trace.xData = value
     }
 
-  /**
-   * Returns the chart as a PlotlyJS script.
-   */
   override fun compile(): String {
     if (xData.size == yData.size) {
       return "${trace.compile()}\n" +
