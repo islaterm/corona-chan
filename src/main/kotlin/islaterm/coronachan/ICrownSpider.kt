@@ -1,13 +1,10 @@
 package islaterm.coronachan
 
+import islaterm.coronachan.utils.BarChart
 import islaterm.coronachan.utils.LoggerKun
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import tech.tablesaw.api.Table
-import tech.tablesaw.plotly.components.Figure
-import tech.tablesaw.plotly.components.Layout
-import tech.tablesaw.plotly.components.Page
-import tech.tablesaw.plotly.traces.BarTrace
 import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader
@@ -22,7 +19,7 @@ const val ROW_CELL = "td"
  * Common interface for the Corona-Virus updates web crawlers.
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version 1.0.1-rc.1
+ * @version 1.0.2-b.1
  * @since 1.0
  */
 interface ICrownSpider {
@@ -40,23 +37,24 @@ abstract class AbstractSpider : ICrownSpider {
  * Web crawler for official information of the MINSAL.
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version 1.0.1-rc.1
+ * @version 1.0.2-b.1
  * @since 1.0
  */
 class MinsalSpider : AbstractSpider() {
   private lateinit var footnote: String
-  lateinit var table: Table
+  lateinit var todayTable: Table
+
+  init {
+
+  }
 
   override fun scrape() {
     val url = "https://www.minsal.cl/nuevo-coronavirus-2019-ncov/casos-confirmados-en-chile-covid-19/"
     val document = Jsoup.connect(url).get()
     val csvString = generateCSV(document)
     getFootnote(document)
-    val date = LocalDate.now()
-    val output = File(".\\src\\main\\resources\\minsal_$date.csv")
-    output.writeText(csvString)
-    table = Table.read().csv(csvString, "Casos COVID-19 en Chile")
-    table = table.first(table.rowCount() - 1)
+    todayTable = Table.read().csv(csvString, "Casos COVID-19 en Chile")
+    todayTable = todayTable.first(todayTable.rowCount() - 1)
   }
 
   private fun getFootnote(document: Document) {
@@ -69,7 +67,7 @@ class MinsalSpider : AbstractSpider() {
   }
 
   /**
-   * Generates a .csv string from the MINSAL COVID-19 table.
+   * Generates a .csv file from the MINSAL COVID-19 table and returns it's contents as a string.
    */
   private fun generateCSV(document: Document): String {
     var csvString = ""
@@ -89,18 +87,20 @@ class MinsalSpider : AbstractSpider() {
         }
       }
     }
+    val date = LocalDate.now()
+    val output = File(".\\src\\main\\resources\\minsal_$date.csv")
+    output.writeText(csvString)
     return csvString
   }
 
   fun generatePlots() {
     var graphicsLinks = ""
-    for (i in 1 until table.columnCount()) {
-      val title = table.column(i).title().replace("Column: ", "").replace(Pattern.compile("[\\r\\n]").toRegex(), "")
-      val layout = Layout.builder()
-        .title("$title ${LocalDate.now()}")
-        .build()
-      val trace = BarTrace.builder(table.categoricalColumn(0), table.numberColumn(i))
-        .build()
+    for (i in 1 until todayTable.columnCount()) {
+      val title =
+        todayTable.column(i).title().replace("Column: ", "").replace(Pattern.compile("[\\r\\n]").toRegex(), "")
+      val chart = BarChart(title)
+      chart.xData = todayTable.stringColumn(0).asList()
+      chart.yData = todayTable.numberColumn(i).asList()
       val filename = "$title.html".replace(Pattern.compile("[*:%]").toRegex(), "").replace(" ", "_")
       graphicsLinks += "      <li>\n" +
           "        <a\n" +
@@ -109,9 +109,7 @@ class MinsalSpider : AbstractSpider() {
           "          rel=\"noopener\"\n" +
           "        >$title</a>\n" +
           "      </li>\n"
-      val page =
-        Page.pageBuilder(Figure(layout, trace), title.replace(Pattern.compile("[^A-Za-z0-9]").toRegex(), "_")).build()
-      outputToFile("$page".replace(Pattern.compile("[\\r\\n]").toRegex(), "\r\n"), filename)
+      outputToFile(chart.toHtml(), filename)
     }
     val coronaChanVue = File("../../corona-chan/src/components/CoronaChan.vue")
     val template = File("src/main/resources/template.vue").readText()
