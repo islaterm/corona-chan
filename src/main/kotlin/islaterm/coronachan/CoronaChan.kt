@@ -9,6 +9,7 @@ import kotlinx.coroutines.runBlocking
 import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader
+import java.util.regex.Pattern
 
 
 const val resources = ".\\src\\main\\resources"
@@ -29,12 +30,12 @@ fun main() {
 /**
  * Corona-chan missed her alarm and is late to school!
  * In the hurry to get ready she released all of her [spiders] >.<
- * 
+ *
  * While she was [run]ning to school with a toast in her mouth she met [LoggerKun] who was also late.
  * Are they going to be able to get to school on time or are they going to get grounded?
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version 1.0.5-b.3
+ * @version 1.0.5-b.4
  * @since 1.0
  */
 class CoronaChan {
@@ -46,7 +47,9 @@ class CoronaChan {
    * [corona-chan's website](https://islaterm-corona-chan.herokuapp.com).
    */
   fun run() {
-    coronaChanVue.writeText(vueTemplate.readText())
+    coronaChanVue.writeText(
+      coronaChanVue.readText().replace(Pattern.compile("<script>(?s).*</script>").toRegex(), vueTemplate.readText())
+    )
     runBlocking {
       coroutineScope {
         spiders.forEach {
@@ -55,7 +58,7 @@ class CoronaChan {
       }
     }
     spiders.forEach { it.generateDocuments() }
-    syncOutput()
+//    syncOutput()
   }
 
   private fun syncOutput() {

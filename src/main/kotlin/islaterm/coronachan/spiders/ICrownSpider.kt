@@ -1,6 +1,5 @@
 package islaterm.coronachan.spiders
 
-import islaterm.coronachan.spiders.minsal.InfectionsSpider
 import islaterm.coronachan.utils.LoggerKun
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -15,7 +14,7 @@ const val ROW_CELL = "td"
  * Common interface for the Corona-Virus updates web crawlers.
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version 1.0.5-b.3
+ * @version 1.0.5-b.4
  * @since 1.0
  */
 interface ICrownSpider {
@@ -30,7 +29,7 @@ interface ICrownSpider {
  * Abstract class that contains the common functionalities of all the web crawlers.
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version 1.0.5-b.3
+ * @version 1.0.5-b.4
  * @since 1.0
  */
 abstract class AbstractSpider(private val url: String) : ICrownSpider {
@@ -60,10 +59,4 @@ abstract class AbstractSpider(private val url: String) : ICrownSpider {
     val paragraphs = document.getElementsByTag("p")
     paragraphs.forEach { action(it) }
   }
-}
-
-fun main() {
-  val spider = InfectionsSpider()
-  spider.scrape()
-  spider.generateDocuments()
 }

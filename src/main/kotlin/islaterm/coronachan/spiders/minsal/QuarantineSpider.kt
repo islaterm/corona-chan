@@ -15,7 +15,7 @@ import java.util.regex.Pattern
  * Web crawler for official information of the MINSAL on quarantine zones.
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version 1.0.5-b.3
+ * @version 1.0.5-b.4
  * @since 1.0
  */
 class QuarantineSpider : AbstractSpider("https://www.minsal.cl/nuevo-coronavirus-2019-ncov/") {
@@ -50,10 +50,10 @@ class QuarantineSpider : AbstractSpider("https://www.minsal.cl/nuevo-coronavirus
 
   override fun generateDocuments() {
     logger.info("Generating documents...")
-    val quarantineText = "'${quarantineZones.joinToString("', '")}'"
+    val quarantineText = "'${quarantineZones.joinToString("', \n${" ".repeat(10)}'")}'"
     coronaChanVue.writeText(
       coronaChanVue.readText()
-        .replace("~quarantine~", quarantineText)
+        .replace("'~quarantine~'", quarantineText)
     )
     logger.info("Finished generating documents")
   }

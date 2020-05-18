@@ -16,7 +16,7 @@ import java.util.regex.Pattern
  * Web crawler for official information of the MINSAL.
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version 1.0.5-b.3
+ * @version 1.0.5-b.4
  * @since 1.0
  */
 class InfectionsSpider :
@@ -38,7 +38,7 @@ class InfectionsSpider :
   private fun getFootnote() {
     iterateParagraphs {
       if (it.text().contains('*')) {
-        footnote = "$it"
+        footnote = "'$it'"
       }
     }
   }
@@ -114,7 +114,7 @@ class InfectionsSpider :
       chart.addData(yesterdayData[table]!!.dropLast(1), "${LocalDate.now().minusDays(1)}")
       chart.addData(todayData[table]!!.dropLast(1), "${LocalDate.now()}")
       val filename = "$title.html".replace(Pattern.compile("[*:%]").toRegex(), "").replace(" ", "_")
-      graphicsLinks += "{ text: '$title', href: '$filename' },\n"
+      graphicsLinks += "{ text: '$title', href: '$filename' },\n${" ".repeat(10)}"
       outputToFile(chart.toHtml(), filename)
       yesterdayTotals.add(yesterdayData[table]!!.last())
       todayTotals.add(todayData[table]!!.last())
@@ -123,12 +123,12 @@ class InfectionsSpider :
     chart.xData = tables
     chart.addData(yesterdayTotals, "${LocalDate.now().minusDays(1)}")
     chart.addData(todayTotals, "${LocalDate.now()}")
-    graphicsLinks += "{href: 'Totales+Chile.html', text: 'Totales Chile'}\n"
+    graphicsLinks += "{ href: 'Totales+Chile.html', text: 'Totales Chile' }\n"
     outputToFile(chart.toHtml(), "Totales+Chile.html")
     coronaChanVue.writeText(
       coronaChanVue.readText()
-        .replace("~graphics~", graphicsLinks)
-        .replace("~footnote~", footnote)
+        .replace("'~graphics~'", graphicsLinks)
+        .replace("'~footnote~'", footnote)
     )
     logger.info("MINSAL spider is done with generating the plots")
   }
