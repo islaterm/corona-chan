@@ -15,7 +15,7 @@ const val ROW_CELL = "td"
  * Common interface for the Corona-Virus updates web crawlers.
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version v1.0.2-b.3
+ * @version 1.0.5-b.3
  * @since 1.0
  */
 interface ICrownSpider {
@@ -23,13 +23,14 @@ interface ICrownSpider {
    * Scrapes a site for information related to Corona-Virus and saves the relevant information into the class' fields.
    */
   fun scrape()
+  fun generateDocuments()
 }
 
 /**
  * Abstract class that contains the common functionalities of all the web crawlers.
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version v1.0.5-b.2
+ * @version 1.0.5-b.3
  * @since 1.0
  */
 abstract class AbstractSpider(private val url: String) : ICrownSpider {
@@ -64,5 +65,5 @@ abstract class AbstractSpider(private val url: String) : ICrownSpider {
 fun main() {
   val spider = InfectionsSpider()
   spider.scrape()
-  spider.generatePlots()
+  spider.generateDocuments()
 }

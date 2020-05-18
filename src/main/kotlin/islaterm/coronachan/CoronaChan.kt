@@ -1,18 +1,25 @@
 package islaterm.coronachan
 
 import islaterm.coronachan.spiders.minsal.InfectionsSpider
+import islaterm.coronachan.spiders.minsal.QuarantineSpider
 import islaterm.coronachan.utils.LoggerKun
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.io.BufferedReader
+import java.io.File
 import java.io.InputStreamReader
+
+
+const val resources = ".\\src\\main\\resources"
+val vueTemplate by lazy { File("$resources\\template.vue") }
+val coronaChanVue by lazy { File("..\\..\\corona-chan\\src\\components\\CoronaChan.vue") }
 
 /**
  * Corona-chan is a high-school girl who likes to play with spiders.
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version 1.0.5-b.2
+ * @version 1.0.5-b.3
  * @since 1.0
  */
 fun main() {
@@ -27,18 +34,19 @@ fun main() {
  * Are they going to be able to get to school on time or are they going to get grounded?
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version 1.0.5-b.2
+ * @version 1.0.5-b.3
  * @since 1.0
  */
 class CoronaChan {
   private val logger by LoggerKun()
-  private val spiders = listOf(InfectionsSpider())
+  private val spiders = listOf(InfectionsSpider(), QuarantineSpider())
 
   /**
    * Runs all of corona's spiders in parallel to get information about COVID-19 and then syncs the retrieved data with
    * [corona-chan's website](https://islaterm-corona-chan.herokuapp.com).
    */
   fun run() {
+    coronaChanVue.writeText(vueTemplate.readText())
     runBlocking {
       coroutineScope {
         spiders.forEach {
@@ -46,7 +54,7 @@ class CoronaChan {
         }
       }
     }
-    spiders.forEach { it.generatePlots() }
+    spiders.forEach { it.generateDocuments() }
     syncOutput()
   }
 

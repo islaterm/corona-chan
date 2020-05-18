@@ -83,7 +83,7 @@ class LoggerKunConfigFactory : ConfigurationFactory() {
  * Sets up the custom configuration for Logger-kun.
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version 1.0.1-a.4
+ * @version 1.0.5-b.3
  * @since 1.0
  */
 fun createConfiguration(name: String, builder: ConfigurationBuilder<BuiltConfiguration>): Configuration =
@@ -98,7 +98,7 @@ fun createConfiguration(name: String, builder: ConfigurationBuilder<BuiltConfigu
       builder
         .newAppender("Stdout", "CONSOLE")
         .addAttribute("target", ConsoleAppender.Target.SYSTEM_OUT)
-        .add(builder.newLayout("PatternLayout").addAttribute("pattern", "%d [%C] %-5level: %msg%n%throwable"))
+        .add(builder.newLayout("PatternLayout").addAttribute("pattern", "%d [%C{2}] %-5level: %msg%n%throwable"))
     )
     .add(
       builder

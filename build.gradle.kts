@@ -12,7 +12,7 @@ plugins {
 }
 
 group = "com.github.islaterm"
-version = "1.0.3-RELEASE.1"
+version = "1.0.5-BETA.3"
 
 repositories {
   mavenCentral()
@@ -27,10 +27,8 @@ dependencies {
   implementation(kotlin("stdlib-jdk8"))
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.6")
   implementation(group = "com.github.kotlin-telegram-bot.kotlin-telegram-bot", name = "dispatcher", version = "4.4.0")
-  implementation(group = "org.yaml", name = "snakeyaml", version = "1.26")
+  implementation(group = "com.esotericsoftware.yamlbeans", name = "yamlbeans", version = "1.14")
   implementation(group = "org.jsoup", name = "jsoup", version = "1.13.1")
-  implementation(group = "tech.tablesaw", name = "tablesaw-core", version = "0.38.1")
-  implementation(group = "tech.tablesaw", name = "tablesaw-jsplot", version = "0.38.1")
   implementation(group = "org.apache.logging.log4j", name = "log4j-api", version = "2.13.3")
   implementation(group = "org.apache.logging.log4j", name = "log4j-core", version = "2.13.3")
   testImplementation(group = "org.junit.jupiter", name = "junit-jupiter-api", version = "5.7.0-M1")

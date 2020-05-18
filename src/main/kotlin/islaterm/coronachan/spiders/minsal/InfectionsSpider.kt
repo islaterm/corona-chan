@@ -1,5 +1,7 @@
 package islaterm.coronachan.spiders.minsal
 
+import islaterm.coronachan.coronaChanVue
+import islaterm.coronachan.resources
 import islaterm.coronachan.spiders.AbstractSpider
 import islaterm.coronachan.spiders.ROW_CELL
 import islaterm.coronachan.spiders.TABLE
@@ -14,7 +16,7 @@ import java.util.regex.Pattern
  * Web crawler for official information of the MINSAL.
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version 1.0.5-b.2
+ * @version 1.0.5-b.3
  * @since 1.0
  */
 class InfectionsSpider :
@@ -34,7 +36,7 @@ class InfectionsSpider :
   }
 
   private fun getFootnote() {
-    iterateParagraphs() {
+    iterateParagraphs {
       if (it.text().contains('*')) {
         footnote = "$it"
       }
@@ -55,13 +57,13 @@ class InfectionsSpider :
       }
     }
     val date = LocalDate.now()
-    val output = File(".\\src\\main\\resources\\minsal_$date.csv")
+    val output = File("$resources\\minsal_$date.csv")
     output.writeText(csvString)
   }
 
   private fun parseYesterdayCSV() {
     val date = LocalDate.now().minusDays(1)
-    File(".\\src\\main\\resources\\minsal_$date.csv").readLines().forEachIndexed { rowIdx, line ->
+    File("$resources\\minsal_$date.csv").readLines().forEachIndexed { rowIdx, line ->
       line.split(",").forEachIndexed { cellIdx, cell ->
         if (cellIdx != 0) {
           if (rowIdx == 0) {
@@ -99,7 +101,7 @@ class InfectionsSpider :
     return csvString
   }
 
-  fun generatePlots() {
+  override fun generateDocuments() {
     logger.info("MINSAL spider is generating the plots")
     var graphicsLinks = ""
     val xData = categories.dropLast(1)
@@ -123,11 +125,11 @@ class InfectionsSpider :
     chart.addData(todayTotals, "${LocalDate.now()}")
     graphicsLinks += "{href: 'Totales+Chile.html', text: 'Totales Chile'}\n"
     outputToFile(chart.toHtml(), "Totales+Chile.html")
-    val coronaChanVue = File("../../corona-chan/src/components/CoronaChan.vue")
-    val template = File("src/main/resources/template.vue").readText()
-      .replace("~graphics~", graphicsLinks)
-      .replace("~footnote~", footnote)
-    coronaChanVue.writeText(template)
+    coronaChanVue.writeText(
+      coronaChanVue.readText()
+        .replace("~graphics~", graphicsLinks)
+        .replace("~footnote~", footnote)
+    )
     logger.info("MINSAL spider is done with generating the plots")
   }
 }

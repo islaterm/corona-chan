@@ -27,6 +27,17 @@
                     ~footnote~
                 </v-row>
             </v-col>
+
+            <v-col class="mb-5" cols="12">
+                <h2 class="headline font-weight-bold mb-3">Zonas en Cuarentena</h2>
+
+                <v-row justify="center">
+                    <ul>
+                        <li v-for="(next, i) in quarantineZones"
+                            :key="i">{{ next }}</li>
+                    </ul>
+                </v-row>
+            </v-col>
         </v-row>
         <v-row>
             <v-col cols="12">
@@ -54,6 +65,9 @@ export default {
         minsalCharts: [
             ~graphics~
         ],
+        quarantineZones: [
+          ~quarantine~
+        ]
     }),
 }
 </script>
