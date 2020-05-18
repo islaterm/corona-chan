@@ -58,7 +58,7 @@ class CoronaChan {
       }
     }
     spiders.forEach { it.generateDocuments() }
-//    syncOutput()
+    syncOutput()
   }
 
   private fun syncOutput() {
