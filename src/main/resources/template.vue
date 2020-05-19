@@ -6,9 +6,7 @@ export default {
         minsalCharts: [
           '~graphics~'
         ],
-        quarantineZones: [
-          '~quarantine~'
-        ],
+        quarantineZones: '~quarantine~',
         footnote: {
             html: '~footnote~'
         }

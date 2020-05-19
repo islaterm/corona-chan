@@ -2,9 +2,9 @@ package islaterm.coronachan.spiders.minsal
 
 import com.esotericsoftware.yamlbeans.YamlReader
 import com.esotericsoftware.yamlbeans.YamlWriter
+import islaterm.coronachan.coronaChanVue
 import islaterm.coronachan.resources
 import islaterm.coronachan.spiders.AbstractSpider
-import islaterm.coronachan.spiders.minsal.QuarantineSpider.QuarantineStatus.*
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileReader
@@ -16,17 +16,17 @@ import java.util.regex.Pattern
  * Web crawler for official information of the MINSAL on quarantine zones.
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version 1.0.5-b.5
+ * @version 1.0.5-rc.1
  * @since 1.0
  */
 class QuarantineSpider : AbstractSpider("https://www.minsal.cl/nuevo-coronavirus-2019-ncov/") {
-  private enum class QuarantineStatus {
-    STAY, QUIT, ENTER
-  }
 
-  private val quarantineZones = mutableMapOf<QuarantineStatus, List<String>>()
+  private lateinit var stay: List<String>
+  private lateinit var quit: List<String>
+  private lateinit var enter: List<String>
 
   override fun concreteScrape() {
+    logger.info("Scraping...")
     val quarantinesFile = File("$resources\\quarantines.yml")
     val reader = try {
       YamlReader(FileReader(quarantinesFile))
@@ -43,7 +43,7 @@ class QuarantineSpider : AbstractSpider("https://www.minsal.cl/nuevo-coronavirus
       todayQuarantine = getTodayQuarantine()
 
       val writer = YamlWriter(FileWriter(quarantinesFile))
-      writer.write(mapOf(today to quarantineZones))
+      writer.write(mapOf(today to todayQuarantine))
       writer.write(yesterdayQuarantine)
       writer.close()
     } else {
@@ -51,14 +51,15 @@ class QuarantineSpider : AbstractSpider("https://www.minsal.cl/nuevo-coronavirus
       val yesterdayData = reader.read(Map::class.java)?.get("${LocalDate.now().minusDays(1)}")
       yesterdayQuarantine = (yesterdayData as? List<*>)?.filterIsInstance<String>()
     }
-    val stay = yesterdayQuarantine?.intersect(todayQuarantine) ?: todayQuarantine
-    val quit = yesterdayQuarantine?.minus(stay) ?: listOf()
-    val enter = todayQuarantine.minus(stay)
-    quarantineZones[ENTER] = enter
-    quarantineZones[QUIT] = quit
-    quarantineZones[STAY] = stay.toList()
+    stay = (yesterdayQuarantine?.intersect(todayQuarantine) ?: todayQuarantine).toList()
+    quit = yesterdayQuarantine?.minus(stay) ?: listOf()
+    enter = todayQuarantine.minus(stay)
+    logger.info("Done with scrapping")
   }
 
+  /**
+   * Parses the document and returns a list with all the zones in quarantine for today.
+   */
   private fun getTodayQuarantine(): List<String> {
     var onQuarantineParagraph = false
     var quarantineZonesTxt = ""
@@ -75,12 +76,25 @@ class QuarantineSpider : AbstractSpider("https://www.minsal.cl/nuevo-coronavirus
 
   override fun generateDocuments() {
     logger.info("Generating documents...")
-    // TODO: Add different values for quarantine status
-//    val quarantineText = "'${quarantineZones.joinToString("', \n${" ".repeat(10)}'")}'"
-//    coronaChanVue.writeText(
-//      coronaChanVue.readText()
-//        .replace("'~quarantine~'", quarantineText)
-//    )
+    val quarantineText = "{\n" +
+        "${
+        if (stay.isNotEmpty())
+          "${" ".repeat(12)} stay :['${stay.joinToString("', '")}'],\n"
+        else
+          ""
+        }${
+        if (enter.isNotEmpty())
+          "${" ".repeat(12)} enter :['${enter.joinToString("', '")}'],\n"
+        else
+          ""
+        }${
+        if (quit.isNotEmpty())
+          "${" ".repeat(12)} quit :['${quit.joinToString("', '")}'],\n"
+        else
+          ""
+        }" +
+        "${" ".repeat(10)}}\n"
+    coronaChanVue.writeText(coronaChanVue.readText().replace("'~quarantine~'", quarantineText))
     logger.info("Finished generating documents")
   }
 }

@@ -16,7 +16,7 @@ import java.util.regex.Pattern
  * Web crawler for official information of the MINSAL.
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version 1.0.5-b.4
+ * @version 1.0.5-rc.1
  * @since 1.0
  */
 class InfectionsSpider :
@@ -30,9 +30,11 @@ class InfectionsSpider :
 
 
   override fun concreteScrape() {
+    logger.info("Scrapping...")
     parseTable()
     getFootnote()
     parseYesterdayCSV()
+    logger.info("Done with scrapping")
   }
 
   private fun getFootnote() {

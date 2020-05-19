@@ -14,7 +14,7 @@ const val ROW_CELL = "td"
  * Common interface for the Corona-Virus updates web crawlers.
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version 1.0.5-b.4
+ * @version 1.0.5-rc.1
  * @since 1.0
  */
 interface ICrownSpider {
@@ -29,7 +29,7 @@ interface ICrownSpider {
  * Abstract class that contains the common functionalities of all the web crawlers.
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version 1.0.5-b.4
+ * @version 1.0.5-rc.1
  * @since 1.0
  */
 abstract class AbstractSpider(private val url: String) : ICrownSpider {
@@ -42,9 +42,7 @@ abstract class AbstractSpider(private val url: String) : ICrownSpider {
   }
 
   override fun scrape() {
-    logger.info("Scrapping")
     concreteScrape()
-    logger.info("Done with scrapping")
   }
 
   /**
