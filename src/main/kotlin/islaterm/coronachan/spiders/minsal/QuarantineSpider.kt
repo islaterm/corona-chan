@@ -16,7 +16,7 @@ import java.util.regex.Pattern
  * Web crawler for official information of the MINSAL on quarantine zones.
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version 1.0.5-b.6
+ * @version 1.0.5-b.7
  * @since 1.0
  */
 class QuarantineSpider(queryDay: LocalDate) :
@@ -49,6 +49,9 @@ class QuarantineSpider(queryDay: LocalDate) :
         writer.write(mapOf("$queryDay" to latestQuarantine))
         writer.write(mapOf(previousDate to previousQuarantine))
         writer.close()
+      }
+      FileWriter("$resources\\tables\\quarantine_zones.csv", true).use { writer ->
+        latestQuarantine.forEach { zone -> writer.append("$queryDay, $zone\r\n") }
       }
     } else {
       latestQuarantine = (lastRecord["$queryDay"] as List<*>).filterIsInstance<String>()
