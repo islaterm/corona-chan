@@ -16,11 +16,11 @@ import java.util.regex.Pattern
  * Web crawler for official information of the MINSAL.
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version 1.0.5-rc.1
+ * @version 1.0.5-b.6
  * @since 1.0
  */
-class InfectionsSpider :
-  AbstractSpider("https://www.minsal.cl/nuevo-coronavirus-2019-ncov/casos-confirmados-en-chile-covid-19/") {
+class InfectionsSpider(queryDay: LocalDate) :
+  AbstractSpider("https://www.minsal.cl/nuevo-coronavirus-2019-ncov/casos-confirmados-en-chile-covid-19/", queryDay) {
 
   private lateinit var footnote: String
   private val categories = mutableListOf<String>()
@@ -29,7 +29,7 @@ class InfectionsSpider :
   private val yesterdayData = mutableMapOf<String, MutableList<Number>>()
 
 
-  override fun concreteScrape() {
+  override fun scrape() {
     logger.info("Scrapping...")
     parseTable()
     getFootnote()
@@ -49,6 +49,8 @@ class InfectionsSpider :
    * Generates a .csv file from the MINSAL COVID-19 table.
    */
   private fun parseTable() {
+    // TODO: Check query date
+    // TODO: Check storage format (prefer yml)
     var csvString = ""
     for ((idx, row) in document.getElementsByTag(TABLE)[0].getElementsByTag(
       TABLE_ROW

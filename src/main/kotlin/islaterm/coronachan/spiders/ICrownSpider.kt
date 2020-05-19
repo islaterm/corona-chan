@@ -5,6 +5,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import java.io.File
+import java.time.LocalDate
 
 const val TABLE_ROW = "tr"
 const val TABLE = "table"
@@ -14,7 +15,7 @@ const val ROW_CELL = "td"
  * Common interface for the Corona-Virus updates web crawlers.
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version 1.0.5-rc.1
+ * @version 1.0.5-b.6
  * @since 1.0
  */
 interface ICrownSpider {
@@ -29,10 +30,10 @@ interface ICrownSpider {
  * Abstract class that contains the common functionalities of all the web crawlers.
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version 1.0.5-rc.1
+ * @version 1.0.5-b.6
  * @since 1.0
  */
-abstract class AbstractSpider(private val url: String) : ICrownSpider {
+abstract class AbstractSpider(private val url: String, protected val queryDay: LocalDate) : ICrownSpider {
   protected val logger by LoggerKun()
   protected val document: Document by lazy { Jsoup.connect(url).get() }
 
@@ -40,15 +41,6 @@ abstract class AbstractSpider(private val url: String) : ICrownSpider {
     val output = File("../../corona-chan/public/$filename")
     output.writeText(content)
   }
-
-  override fun scrape() {
-    concreteScrape()
-  }
-
-  /**
-   * Scrapes the html document to get the desired info.
-   */
-  protected abstract fun concreteScrape()
 
   /**
    * Iterates over the paragraphs of the html document and executes an action over them.

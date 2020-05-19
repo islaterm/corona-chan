@@ -9,6 +9,8 @@ import kotlinx.coroutines.runBlocking
 import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader
+import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.regex.Pattern
 
 
@@ -20,7 +22,7 @@ val coronaChanVue by lazy { File("..\\..\\corona-chan\\src\\components\\CoronaCh
  * Corona-chan is a high-school girl who likes to play with spiders.
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version 1.0.5-rc.1
+ * @version 1.0.5-b.6
  * @since 1.0
  */
 fun main() {
@@ -35,12 +37,20 @@ fun main() {
  * Are they going to be able to get to school on time or are they going to get grounded?
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version 1.0.5-rc.1
+ * @version 1.0.5-b.6
  * @since 1.0
  */
 class CoronaChan {
   private val logger by LoggerKun()
-  private val spiders = listOf(InfectionsSpider(), QuarantineSpider())
+  private val queryDay: LocalDate
+    get() {
+      val now = LocalDateTime.now()
+      return if (now < now.withHour(12).withMinute(10))
+        LocalDate.now().minusDays(1)
+      else
+        LocalDate.now()
+    }
+  private val spiders = listOf(InfectionsSpider(queryDay), QuarantineSpider(queryDay))
 
   /**
    * Runs all of corona's spiders in parallel to get information about COVID-19 and then syncs the retrieved data with

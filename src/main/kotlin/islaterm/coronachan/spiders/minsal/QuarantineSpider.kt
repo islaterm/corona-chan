@@ -16,51 +16,58 @@ import java.util.regex.Pattern
  * Web crawler for official information of the MINSAL on quarantine zones.
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version 1.0.5-rc.1
+ * @version 1.0.5-b.6
  * @since 1.0
  */
-class QuarantineSpider : AbstractSpider("https://www.minsal.cl/nuevo-coronavirus-2019-ncov/") {
+class QuarantineSpider(queryDay: LocalDate) :
+  AbstractSpider("https://www.minsal.cl/nuevo-coronavirus-2019-ncov/", queryDay) {
 
   private lateinit var stay: List<String>
   private lateinit var quit: List<String>
   private lateinit var enter: List<String>
 
-  override fun concreteScrape() {
+  override fun scrape() {
     logger.info("Scraping...")
     val quarantinesFile = File("$resources\\quarantines.yml")
+
     val reader = try {
       YamlReader(FileReader(quarantinesFile))
     } catch (e: FileNotFoundException) {
       null
     }
     val lastRecord = reader?.read(Map::class.java)
-    val today = "${LocalDate.now()}"
-    val yesterdayQuarantine: List<String>?
-    val todayQuarantine: List<String>
+    val previousQuarantine: List<String>?
+    val latestQuarantine: List<String>
+    val previousDate = "${queryDay.minusDays(1)}"
 
-    if (lastRecord == null || lastRecord.keys.none { it == today }) {
-      yesterdayQuarantine = (lastRecord?.get("${LocalDate.now().minusDays(1)}") as? List<*>)?.filterIsInstance<String>()
-      todayQuarantine = getTodayQuarantine()
+    if (lastRecord == null || lastRecord.keys.none { it == "$queryDay" }) {
+      previousQuarantine = (lastRecord?.get(previousDate) as? List<*>)?.filterIsInstance<String>()
 
-      val writer = YamlWriter(FileWriter(quarantinesFile))
-      writer.write(mapOf(today to todayQuarantine))
-      writer.write(yesterdayQuarantine)
-      writer.close()
+      latestQuarantine = scrapeQuarantine()
+      FileWriter(quarantinesFile).use {
+        val writer = YamlWriter(it)
+        writer.write(mapOf("$queryDay" to latestQuarantine))
+        writer.write(mapOf(previousDate to previousQuarantine))
+        writer.close()
+      }
     } else {
-      todayQuarantine = (lastRecord[today] as List<*>).filterIsInstance<String>()
-      val yesterdayData = reader.read(Map::class.java)?.get("${LocalDate.now().minusDays(1)}")
-      yesterdayQuarantine = (yesterdayData as? List<*>)?.filterIsInstance<String>()
+      latestQuarantine = (lastRecord["$queryDay"] as List<*>).filterIsInstance<String>()
+      val yesterdayData = reader.read(Map::class.java)?.get(previousDate)
+      previousQuarantine = (yesterdayData as? List<*>)?.filterIsInstance<String>()
     }
-    stay = (yesterdayQuarantine?.intersect(todayQuarantine) ?: todayQuarantine).toList()
-    quit = yesterdayQuarantine?.minus(stay) ?: listOf()
-    enter = todayQuarantine.minus(stay)
+
+    reader?.close()
+
+    stay = (previousQuarantine?.intersect(latestQuarantine) ?: latestQuarantine).toList()
+    quit = previousQuarantine?.minus(stay) ?: listOf()
+    enter = latestQuarantine.minus(stay)
     logger.info("Done with scrapping")
   }
 
   /**
    * Parses the document and returns a list with all the zones in quarantine for today.
    */
-  private fun getTodayQuarantine(): List<String> {
+  private fun scrapeQuarantine(): List<String> {
     var onQuarantineParagraph = false
     var quarantineZonesTxt = ""
     iterateParagraphs {
