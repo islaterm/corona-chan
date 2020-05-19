@@ -11,7 +11,10 @@ import java.io.File
 import java.io.InputStreamReader
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.ZoneId
+import java.util.*
 import java.util.regex.Pattern
+import kotlin.concurrent.schedule
 
 
 const val resources = ".\\src\\main\\resources"
@@ -22,12 +25,25 @@ val coronaChanVue by lazy { File("..\\..\\corona-chan\\src\\components\\CoronaCh
  * Corona-chan is a high-school girl who likes to play with spiders.
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version 1.0.5-b.6
+ * @version v1.0.5-b.8
  * @since 1.0
  */
 fun main() {
-  CoronaChan().run()
+  val coronaChan = CoronaChan()
+  coronaChan.run()
+  val now = LocalDateTime.now()
+  val updateTime = now.withHour(12).withMinute(15)
+  Timer().schedule(
+    Date.from(
+      updateTime.plusDays(if (now > updateTime) 1 else 0)
+        .withHour(12)
+        .withMinute(15)
+        .atZone(ZoneId.systemDefault())
+        .toInstant()
+    ), 86_400_000
+  ) { coronaChan.run() }
 }
+
 
 /**
  * Corona-chan missed her alarm and is late to school!
@@ -37,7 +53,7 @@ fun main() {
  * Are they going to be able to get to school on time or are they going to get grounded?
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version 1.0.5-b.6
+ * @version v1.0.5-b.8
  * @since 1.0
  */
 class CoronaChan {
@@ -45,7 +61,7 @@ class CoronaChan {
   private val queryDay: LocalDate
     get() {
       val now = LocalDateTime.now()
-      return if (now < now.withHour(12).withMinute(10))
+      return if (now < now.withHour(12).withMinute(15))
         LocalDate.now().minusDays(1)
       else
         LocalDate.now()
