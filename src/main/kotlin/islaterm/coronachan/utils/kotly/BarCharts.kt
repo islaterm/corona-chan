@@ -22,18 +22,19 @@ class BarChart(title: String) : AbstractBarChart(title) {
  * Class that represents a grouped bar chart.
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version 1.0.2-b.3
+ * @version 1.0.5-rc.2
  * @since 1.0
  */
 class GroupedBarChart(title: String) : AbstractBarChart(title) {
   /**
    * Adds a new group of data to the y axis.
    */
-  fun addData(yData: List<Number>, name: String) {
+  fun addData(yData: List<Number>, name: String): GroupedBarChart {
     val trace = BarTrace("${traces.size}", name)
     trace.xData = xData
     trace.yData = yData
     traces.add(trace)
+    return this
   }
 }
 

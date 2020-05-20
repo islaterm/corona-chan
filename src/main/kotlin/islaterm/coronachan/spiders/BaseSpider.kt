@@ -21,7 +21,7 @@ const val ROW_CELL = "td"
  * Common interface for the Corona-Virus updates web crawlers.
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version 1.0.5-b.10
+ * @version 1.0.5-rc.2
  * @since 1.0
  */
 interface ICrownSpider {
@@ -39,7 +39,7 @@ interface ICrownSpider {
  *    Creates the necessary storage files if they're not present in the FS.
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version 1.0.5-b.10
+ * @version 1.0.5-rc.2
  * @since 1.0
  */
 abstract class AbstractSpider(
@@ -48,14 +48,15 @@ abstract class AbstractSpider(
   filename: String,
   headers: String
 ) : ICrownSpider {
+  protected val logger by LoggerKun()
+  protected val document: Document by lazy { Jsoup.connect(url).get() }
+  protected var latestRecord = mutableListOf<IDayRecord?>()
+  protected var oldestRecord = mutableListOf<IDayRecord?>()
+  protected lateinit var previousDate: String
+
   private val mapper: ObjectMapper = ObjectMapper(YAMLFactory()).registerModule(KotlinModule())
   private val storageYAMLFile = File("$resources/$filename.yml")
   private val storageCSVFile = File("$resources/tables/$filename.csv")
-  protected val logger by LoggerKun()
-  protected val document: Document by lazy { Jsoup.connect(url).get() }
-  private lateinit var previousDate: String
-  protected var latestRecord = mutableListOf<IDayRecord?>()
-  protected var oldestRecord = mutableListOf<IDayRecord?>()
 
   init {
     if (!storageYAMLFile.exists()) {

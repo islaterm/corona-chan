@@ -3,7 +3,7 @@ package islaterm.coronachan.spiders.minsal
 import islaterm.coronachan.coronaChanVue
 import islaterm.coronachan.spiders.AbstractSpider
 import islaterm.coronachan.utils.IDayRecord
-import java.io.FileWriter
+import islaterm.coronachan.utils.QuarantineRecord
 import java.time.LocalDate
 import java.util.regex.Pattern
 
@@ -11,7 +11,7 @@ import java.util.regex.Pattern
  * Web crawler for official information of the MINSAL on quarantine zones.
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version 1.0.5-b.10
+ * @version 1.0.5-rc.2
  * @since 1.0
  */
 class QuarantineSpider(queryDay: LocalDate) :
@@ -71,10 +71,4 @@ class QuarantineSpider(queryDay: LocalDate) :
     coronaChanVue.writeText(coronaChanVue.readText().replace("'~quarantine~'", quarantineText))
     logger.info("Finished generating documents")
   }
-}
-
-data class QuarantineRecord(override val day: String, val zone: String) : IDayRecord {
-  override fun equals(other: Any?) = other is QuarantineRecord && zone == other.zone
-  override fun hashCode() = zone.hashCode()
-  override fun toString() = zone
 }
