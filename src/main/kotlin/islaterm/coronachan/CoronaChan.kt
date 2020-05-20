@@ -17,9 +17,9 @@ import java.util.regex.Pattern
 import kotlin.concurrent.schedule
 
 
-const val resources = ".\\src\\main\\resources"
-val vueTemplate by lazy { File("$resources\\template.vue") }
-val coronaChanVue by lazy { File("..\\..\\corona-chan\\src\\components\\CoronaChan.vue") }
+const val resources = "./src/main/resources"
+val vueTemplate by lazy { File("$resources/template.vue") }
+val coronaChanVue by lazy { File("../../corona-chan/src/components/CoronaChan.vue") }
 
 /**
  * Corona-chan is a high-school girl who likes to play with spiders.

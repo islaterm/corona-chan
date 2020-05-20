@@ -17,17 +17,11 @@ application {
 
 repositories {
   mavenCentral()
-  jcenter()
-  maven("https://dl.bintray.com/mipt-npm/dataforge")
-  maven("https://dl.bintray.com/mipt-npm/scientifik")
-  maven("https://dl.bintray.com/kotlin/ktor/")
-  maven("https://jitpack.io")
 }
 
 dependencies {
   implementation(kotlin("stdlib-jdk8"))
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.6")
-//  implementation(group = "com.github.kotlin-telegram-bot.kotlin-telegram-bot", name = "dispatcher", version = "4.4.0")
   implementation(group = "com.esotericsoftware.yamlbeans", name = "yamlbeans", version = "1.14")
   implementation(group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml", version = "2.11.0")
   implementation(group = "com.fasterxml.jackson.datatype", name = "jackson-datatype-jsr310", version = "2.11.0")
