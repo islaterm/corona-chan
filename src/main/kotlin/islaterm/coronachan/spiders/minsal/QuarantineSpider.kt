@@ -15,48 +15,26 @@ import java.util.regex.Pattern
  * Web crawler for official information of the MINSAL on quarantine zones.
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version 1.0.5-b.9
+ * @version 1.0.5-b.10
  * @since 1.0
  */
 class QuarantineSpider(queryDay: LocalDate) :
   AbstractSpider("https://www.minsal.cl/nuevo-coronavirus-2019-ncov/", queryDay, "quarantines.yml") {
 
-  private lateinit var stay: List<QuarantineRecord?>
-  private lateinit var quit: List<QuarantineRecord?>
-  private lateinit var enter: List<QuarantineRecord?>
+  private lateinit var stay: List<IDayRecord?>
+  private lateinit var quit: List<IDayRecord?>
+  private lateinit var enter: List<IDayRecord?>
 
   override fun scrape() {
     logger.info("Scraping...")
-    val lastRecord = getLastRecords(QuarantineRecord::class.java)
-
-    var latestQuarantine = lastRecord.first
-    var previousQuarantine = lastRecord.second
-
-    if (latestQuarantine.isEmpty()
-      || latestQuarantine[0]?.day != "$queryDay" // All the records on the list should have the same date
-    ) {
-      previousQuarantine = latestQuarantine
-
-      latestQuarantine = scrapeQuarantine()
-      val mapper = ObjectMapper(YAMLFactory()).registerModule(KotlinModule())
-      val writer = mapper.writer().writeValues(storageFile)
-      latestQuarantine.forEach { zone -> writer.write(zone) }
-      previousQuarantine.forEach { zone -> writer.write(zone) }
-      FileWriter("$resources\\tables\\quarantine_zones.csv", true).use { writer ->
-        latestQuarantine.forEach { zone -> writer.append("$queryDay, $zone\r\n") }
-      }
-    }
-
-    stay = previousQuarantine.intersect(latestQuarantine).toList()
-    quit = previousQuarantine.minus(stay)
-    enter = latestQuarantine.minus(stay)
+    getRecords(QuarantineRecord::class.java)
+    stay = oldestRecord.intersect(latestRecord).toList()
+    quit = oldestRecord.minus(stay)
+    enter = latestRecord.minus(stay)
     logger.info("Done with scrapping")
   }
 
-  /**
-   * Parses the document and returns a list with all the zones in quarantine for today.
-   */
-  private fun scrapeQuarantine(): List<QuarantineRecord?> {
+  override fun scrapeNewRecord() {
     var onQuarantineParagraph = false
     var quarantineZonesTxt = ""
     iterateParagraphs {
@@ -67,8 +45,14 @@ class QuarantineSpider(queryDay: LocalDate) :
         onQuarantineParagraph = true
       }
     }
-    return quarantineZonesTxt.split(Pattern.compile("\\s*–\\s*").toRegex()).drop(1)
-      .map { QuarantineRecord(it, "${LocalDate.now()}") }
+    latestRecord = quarantineZonesTxt.split(Pattern.compile("\\s*–\\s*").toRegex()).drop(1)
+      .map { QuarantineRecord(it, "${LocalDate.now()}") }.toMutableList()
+    val writer = mapper.writer().writeValues(storageFile)
+    latestRecord.forEach { zone -> writer.write(zone) }
+    oldestRecord.forEach { zone -> writer.write(zone) }
+    FileWriter("$resources\\tables\\quarantine_zones.csv", true).use { writer ->
+      latestRecord.forEach { zone -> writer.append("$queryDay, $zone\r\n") }
+    }
   }
 
   override fun generateDocuments() {

@@ -17,7 +17,7 @@ import java.util.regex.Pattern
  * Web crawler for official information of the MINSAL.
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version 1.0.5-b.9
+ * @version 1.0.5-b.10
  * @since 1.0
  */
 class InfectionsSpider(queryDay: LocalDate) :
@@ -32,15 +32,18 @@ class InfectionsSpider(queryDay: LocalDate) :
   private val tables = mutableListOf<String>()
   private val todayData = mutableMapOf<String, MutableList<Number>>()
   private val yesterdayData = mutableMapOf<String, MutableList<Number>>()
-
-
+  
   override fun scrape() {
     logger.info("Scrapping...")
-    super.getLastRecords(InfectionRecord::class.java)
+    super.getRecords(InfectionRecord::class.java)
     parseTable()
     getFootnote()
     parseYesterdayCSV()
     logger.info("Done with scrapping")
+  }
+
+  override fun scrapeNewRecord() {
+    TODO("Not yet implemented")
   }
 
   private fun getFootnote() {
@@ -83,7 +86,6 @@ class InfectionsSpider(queryDay: LocalDate) :
           }
         }
       }
-
     }
   }
 
