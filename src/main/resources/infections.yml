@@ -1,0 +1,306 @@
+---
+day: "2020-05-20"
+place: "Arica y Parinacota"
+totalInfections: 424
+newInfections: 2
+newWithSymptoms: 2
+newWithoutSymptoms: 0
+deceased: 7
+percentage: 0.79
+---
+day: "2020-05-20"
+place: "Tarapacá"
+totalInfections: 1139
+newInfections: 30
+newWithSymptoms: 28
+newWithoutSymptoms: 2
+deceased: 4
+percentage: 2.12
+---
+day: "2020-05-20"
+place: "Antofagasta"
+totalInfections: 1731
+newInfections: 83
+newWithSymptoms: 51
+newWithoutSymptoms: 32
+deceased: 17
+percentage: 3.23
+---
+day: "2020-05-20"
+place: "Atacama"
+totalInfections: 163
+newInfections: 5
+newWithSymptoms: 3
+newWithoutSymptoms: 2
+deceased: 0
+percentage: 0.3
+---
+day: "2020-05-20"
+place: "Coquimbo"
+totalInfections: 263
+newInfections: 24
+newWithSymptoms: 13
+newWithoutSymptoms: 11
+deceased: 2
+percentage: 0.49
+---
+day: "2020-05-20"
+place: "Valparaíso"
+totalInfections: 1770
+newInfections: 131
+newWithSymptoms: 107
+newWithoutSymptoms: 24
+deceased: 35
+percentage: 3.3
+---
+day: "2020-05-20"
+place: "Metropolitana"
+totalInfections: 41179
+newInfections: 3588
+newWithSymptoms: 3298
+newWithoutSymptoms: 290
+deceased: 348
+percentage: 76.8
+---
+day: "2020-05-20"
+place: "O’Higgins"
+totalInfections: 455
+newInfections: 13
+newWithSymptoms: 11
+newWithoutSymptoms: 2
+deceased: 7
+percentage: 0.85
+---
+day: "2020-05-20"
+place: "Maule"
+totalInfections: 680
+newInfections: 40
+newWithSymptoms: 29
+newWithoutSymptoms: 11
+deceased: 14
+percentage: 1.27
+---
+day: "2020-05-20"
+place: "Ñuble"
+totalInfections: 1011
+newInfections: 23
+newWithSymptoms: 20
+newWithoutSymptoms: 3
+deceased: 21
+percentage: 1.89
+---
+day: "2020-05-20"
+place: "Biobío"
+totalInfections: 1224
+newInfections: 52
+newWithSymptoms: 43
+newWithoutSymptoms: 9
+deceased: 9
+percentage: 2.28
+---
+day: "2020-05-20"
+place: "Araucanía"
+totalInfections: 1680
+newInfections: 14
+newWithSymptoms: 10
+newWithoutSymptoms: 4
+deceased: 44
+percentage: 3.13
+---
+day: "2020-05-20"
+place: "Los Ríos"
+totalInfections: 247
+newInfections: 18
+newWithSymptoms: 17
+newWithoutSymptoms: 1
+deceased: 6
+percentage: 0.46
+---
+day: "2020-05-20"
+place: "Los Lagos"
+totalInfections: 666
+newInfections: 10
+newWithSymptoms: 10
+newWithoutSymptoms: 0
+deceased: 12
+percentage: 1.24
+---
+day: "2020-05-20"
+place: "Aysén"
+totalInfections: 8
+newInfections: 0
+newWithSymptoms: 0
+newWithoutSymptoms: 0
+deceased: 0
+percentage: 0.01
+---
+day: "2020-05-20"
+place: "Magallanes"
+totalInfections: 977
+newInfections: 5
+newWithSymptoms: 5
+newWithoutSymptoms: 0
+deceased: 18
+percentage: 1.82
+---
+day: "2020-05-20"
+place: "Chile"
+totalInfections: 53617
+newInfections: 4038
+newWithSymptoms: 3647
+newWithoutSymptoms: 391
+deceased: 544
+percentage: 100.0
+---
+day: "2020-05-19"
+place: "Arica y Parinacota"
+totalInfections: 422
+newInfections: 24
+newWithSymptoms: 21
+newWithoutSymptoms: 3
+deceased: 7
+percentage: 0.85
+---
+day: "2020-05-19"
+place: "Tarapacá"
+totalInfections: 1109
+newInfections: 53
+newWithSymptoms: 40
+newWithoutSymptoms: 13
+deceased: 4
+percentage: 2.24
+---
+day: "2020-05-19"
+place: "Antofagasta"
+totalInfections: 1648
+newInfections: 59
+newWithSymptoms: 43
+newWithoutSymptoms: 16
+deceased: 16
+percentage: 3.32
+---
+day: "2020-05-19"
+place: "Atacama"
+totalInfections: 158
+newInfections: 1
+newWithSymptoms: 1
+newWithoutSymptoms: 0
+deceased: 0
+percentage: 0.32
+---
+day: "2020-05-19"
+place: "Coquimbo"
+totalInfections: 239
+newInfections: 27
+newWithSymptoms: 21
+newWithoutSymptoms: 6
+deceased: 2
+percentage: 0.48
+---
+day: "2020-05-19"
+place: "Valparaíso"
+totalInfections: 1639
+newInfections: 86
+newWithSymptoms: 72
+newWithoutSymptoms: 14
+deceased: 32
+percentage: 3.31
+---
+day: "2020-05-19"
+place: "Metropolitana"
+totalInfections: 37591
+newInfections: 3140
+newWithSymptoms: 2802
+newWithoutSymptoms: 338
+deceased: 318
+percentage: 75.82
+---
+day: "2020-05-19"
+place: "O’Higgins"
+totalInfections: 442
+newInfections: 24
+newWithSymptoms: 13
+newWithoutSymptoms: 11
+deceased: 7
+percentage: 0.89
+---
+day: "2020-05-19"
+place: "Maule"
+totalInfections: 640
+newInfections: 38
+newWithSymptoms: 33
+newWithoutSymptoms: 5
+deceased: 14
+percentage: 1.29
+---
+day: "2020-05-19"
+place: "Ñuble"
+totalInfections: 988
+newInfections: 3
+newWithSymptoms: 3
+newWithoutSymptoms: 0
+deceased: 21
+percentage: 1.99
+---
+day: "2020-05-19"
+place: "Biobío"
+totalInfections: 1172
+newInfections: 28
+newWithSymptoms: 25
+newWithoutSymptoms: 3
+deceased: 9
+percentage: 2.36
+---
+day: "2020-05-19"
+place: "Araucanía"
+totalInfections: 1666
+newInfections: 27
+newWithSymptoms: 18
+newWithoutSymptoms: 9
+deceased: 44
+percentage: 3.36
+---
+day: "2020-05-19"
+place: "Los Ríos"
+totalInfections: 229
+newInfections: 5
+newWithSymptoms: 4
+newWithoutSymptoms: 1
+deceased: 6
+percentage: 0.46
+---
+day: "2020-05-19"
+place: "Los Lagos"
+totalInfections: 656
+newInfections: 4
+newWithSymptoms: 2
+newWithoutSymptoms: 2
+deceased: 12
+percentage: 1.32
+---
+day: "2020-05-19"
+place: "Aysén"
+totalInfections: 8
+newInfections: 0
+newWithSymptoms: 0
+newWithoutSymptoms: 0
+deceased: 0
+percentage: 0.02
+---
+day: "2020-05-19"
+place: "Magallanes"
+totalInfections: 972
+newInfections: 1
+newWithSymptoms: 1
+newWithoutSymptoms: 0
+deceased: 17
+percentage: 1.96
+---
+day: "2020-05-19"
+place: "Chile"
+totalInfections: 49579
+newInfections: 3520
+newWithSymptoms: 3099
+newWithoutSymptoms: 421
+deceased: 509
+percentage: 100.0

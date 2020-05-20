@@ -1,10 +1,6 @@
 package islaterm.coronachan.spiders.minsal
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
-import com.fasterxml.jackson.module.kotlin.KotlinModule
 import islaterm.coronachan.coronaChanVue
-import islaterm.coronachan.resources
 import islaterm.coronachan.spiders.AbstractSpider
 import islaterm.coronachan.utils.IDayRecord
 import java.io.FileWriter
@@ -19,7 +15,7 @@ import java.util.regex.Pattern
  * @since 1.0
  */
 class QuarantineSpider(queryDay: LocalDate) :
-  AbstractSpider("https://www.minsal.cl/nuevo-coronavirus-2019-ncov/", queryDay, "quarantines.yml") {
+  AbstractSpider("https://www.minsal.cl/nuevo-coronavirus-2019-ncov/", queryDay, "quarantines", "date,zone") {
 
   private lateinit var stay: List<IDayRecord?>
   private lateinit var quit: List<IDayRecord?>
@@ -45,14 +41,11 @@ class QuarantineSpider(queryDay: LocalDate) :
         onQuarantineParagraph = true
       }
     }
-    latestRecord = quarantineZonesTxt.split(Pattern.compile("\\s*–\\s*").toRegex()).drop(1)
-      .map { QuarantineRecord(it, "${LocalDate.now()}") }.toMutableList()
-    val writer = mapper.writer().writeValues(storageFile)
-    latestRecord.forEach { zone -> writer.write(zone) }
-    oldestRecord.forEach { zone -> writer.write(zone) }
-    FileWriter("$resources\\tables\\quarantine_zones.csv", true).use { writer ->
-      latestRecord.forEach { zone -> writer.append("$queryDay, $zone\r\n") }
-    }
+    latestRecord = quarantineZonesTxt.split(Pattern.compile("\\s*–\\s*").toRegex())
+      .drop(1) // The first element is always an empty string 🤦‍
+      .map { QuarantineRecord("$queryDay", zone = it) }
+      .toMutableList()
+    saveRecords()
   }
 
   override fun generateDocuments() {
@@ -80,7 +73,7 @@ class QuarantineSpider(queryDay: LocalDate) :
   }
 }
 
-data class QuarantineRecord(val zone: String, override val day: String) : IDayRecord {
+data class QuarantineRecord(override val day: String, val zone: String) : IDayRecord {
   override fun equals(other: Any?) = other is QuarantineRecord && zone == other.zone
   override fun hashCode() = zone.hashCode()
   override fun toString() = zone

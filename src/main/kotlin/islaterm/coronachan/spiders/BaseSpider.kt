@@ -10,6 +10,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import java.io.File
+import java.io.FileWriter
 import java.time.LocalDate
 
 const val TABLE_ROW = "tr"
@@ -34,14 +35,22 @@ interface ICrownSpider {
 /**
  * Abstract class that contains the common functionalities of all the web crawlers.
  *
+ * @constructor
+ *    Creates the necessary storage files if they're not present in the FS.
+ *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
  * @version 1.0.5-b.10
  * @since 1.0
  */
-abstract class AbstractSpider(private val url: String, protected val queryDay: LocalDate, filename: String) :
-  ICrownSpider {
-  protected val mapper = ObjectMapper().registerModule(KotlinModule())
-  protected val storageFile = File("$resources\\$filename")
+abstract class AbstractSpider(
+  private val url: String,
+  protected val queryDay: LocalDate,
+  filename: String,
+  headers: String
+) : ICrownSpider {
+  private val mapper: ObjectMapper = ObjectMapper(YAMLFactory()).registerModule(KotlinModule())
+  private val storageYAMLFile = File("$resources/$filename.yml")
+  private val storageCSVFile = File("$resources/tables/$filename.csv")
   protected val logger by LoggerKun()
   protected val document: Document by lazy { Jsoup.connect(url).get() }
   private lateinit var previousDate: String
@@ -49,8 +58,12 @@ abstract class AbstractSpider(private val url: String, protected val queryDay: L
   protected var oldestRecord = mutableListOf<IDayRecord?>()
 
   init {
-    if (!storageFile.exists()) {
-      storageFile.createNewFile()
+    if (!storageYAMLFile.exists()) {
+      storageYAMLFile.createNewFile()
+    }
+    if (!storageCSVFile.exists()) {
+      storageCSVFile.createNewFile()
+      storageCSVFile.writeText("$headers\r\n")
     }
   }
 
@@ -63,21 +76,38 @@ abstract class AbstractSpider(private val url: String, protected val queryDay: L
    * @return a pair of the records of the last 2 days
    */
   protected fun <T : IDayRecord> getRecords(cls: Class<T>) {
-    val parser = YAMLFactory().createParser(storageFile)
+    val parser = YAMLFactory().createParser(storageYAMLFile)
     previousDate = "${queryDay.minusDays(1)}"
+    var inLatestRecord = true
+    var prevDate = ""
     mapper.readValues(parser, cls).readAll().forEach {
-      if (it.day == "$queryDay") {
+      if (prevDate.isBlank()) {
+        prevDate = it.day
+      }
+      val latestDate = it.day
+      inLatestRecord = inLatestRecord && latestDate == prevDate
+      if (inLatestRecord) {
         latestRecord.add(it)
-      } else if (it.day == previousDate) {
+      } else {
         oldestRecord.add(it)
       }
+      prevDate = it.day
     }
-    if (latestRecord.isEmpty()
-      || latestRecord[0]?.day != "$queryDay" // All the records on the list should have the same date
+    if (latestRecord[0]?.day != "$queryDay" // All the records on the list should have the same date
     ) {
       oldestRecord = latestRecord
       scrapeNewRecord()
     }
+  }
+
+  /**
+   * Saves the latest records to the appropriate files
+   */
+  protected fun saveRecords() {
+    val writer = mapper.writer().writeValues(storageYAMLFile)
+    latestRecord.forEach { writer.write(it) }
+    oldestRecord.forEach { writer.write(it) }
+    FileWriter(storageCSVFile, true).use { latestRecord.forEach { zone -> it.append("$queryDay, $zone\r\n") } }
   }
 
   /**
