@@ -11,7 +11,7 @@ import java.util.regex.Pattern
  * Web crawler for official information of the MINSAL on quarantine zones.
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version 1.0.5-rc.2
+ * @version 1.0.5
  * @since 1.0
  */
 class QuarantineSpider(queryDay: LocalDate) :

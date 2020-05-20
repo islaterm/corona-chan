@@ -21,7 +21,7 @@ const val ROW_CELL = "td"
  * Common interface for the Corona-Virus updates web crawlers.
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version 1.0.5-rc.2
+ * @version 1.0.5
  * @since 1.0
  */
 interface ICrownSpider {
@@ -39,7 +39,7 @@ interface ICrownSpider {
  *    Creates the necessary storage files if they're not present in the FS.
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version 1.0.5-rc.2
+ * @version 1.0.5
  * @since 1.0
  */
 abstract class AbstractSpider(

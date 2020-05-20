@@ -22,7 +22,7 @@ class BarChart(title: String) : AbstractBarChart(title) {
  * Class that represents a grouped bar chart.
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version 1.0.5-rc.2
+ * @version 1.0.5
  * @since 1.0
  */
 class GroupedBarChart(title: String) : AbstractBarChart(title) {

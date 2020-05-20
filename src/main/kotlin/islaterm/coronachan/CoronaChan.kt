@@ -25,7 +25,7 @@ val coronaChanVue by lazy { File("..\\..\\corona-chan\\src\\components\\CoronaCh
  * Corona-chan is a high-school girl who likes to play with spiders.
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version v1.0.5-b.8
+ * @version v1.0.5
  * @since 1.0
  */
 fun main() {
@@ -53,7 +53,7 @@ fun main() {
  * Are they going to be able to get to school on time or are they going to get grounded?
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version v1.0.5-b.8
+ * @version v1.0.5
  * @since 1.0
  */
 class CoronaChan {

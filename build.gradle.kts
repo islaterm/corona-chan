@@ -5,10 +5,15 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 plugins {
   kotlin("jvm") version "1.3.70"
   kotlin("plugin.serialization") version "1.3.70"
+  application
 }
 
 group = "com.github.islaterm"
-version = "1.0.5-BETA.3"
+version = "1.0.5-RELEASE"
+
+application {
+  mainClass.set("islaterm.coronachan.CoronaChanKt")
+}
 
 repositories {
   mavenCentral()
@@ -22,7 +27,7 @@ repositories {
 dependencies {
   implementation(kotlin("stdlib-jdk8"))
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.6")
-  implementation(group = "com.github.kotlin-telegram-bot.kotlin-telegram-bot", name = "dispatcher", version = "4.4.0")
+//  implementation(group = "com.github.kotlin-telegram-bot.kotlin-telegram-bot", name = "dispatcher", version = "4.4.0")
   implementation(group = "com.esotericsoftware.yamlbeans", name = "yamlbeans", version = "1.14")
   implementation(group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml", version = "2.11.0")
   implementation(group = "com.fasterxml.jackson.datatype", name = "jackson-datatype-jsr310", version = "2.11.0")
@@ -42,12 +47,15 @@ tasks {
     kotlinOptions.jvmTarget = "1.8"
   }
   register<Jar>("uberJar") {
+    manifest {
+      attributes(mapOf("Main-Class" to "islaterm.coronachan.CoronaChanKt"))
+    }
     archiveAppendix.set("uber")
     from(sourceSets.main.get().output)
     dependsOn(configurations.runtimeClasspath)
     from({
       configurations.runtimeClasspath.get().filter {
-        it.name.endsWith("jar") && !it.name.contains("dispatcher-4.4.0.jar")
+        it.name.endsWith("jar")
       }.map {
         zipTree(it)
       }

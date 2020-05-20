@@ -83,7 +83,7 @@ class LoggerKunConfigFactory : ConfigurationFactory() {
  * Sets up the custom configuration for Logger-kun.
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version 1.0.5-b.3
+ * @version 1.0.5
  * @since 1.0
  */
 fun createConfiguration(name: String, builder: ConfigurationBuilder<BuiltConfiguration>): Configuration =

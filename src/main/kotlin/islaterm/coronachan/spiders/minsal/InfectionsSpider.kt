@@ -15,7 +15,7 @@ import java.time.LocalDate
  * Web crawler for official information of the MINSAL.
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version 1.0.5-rc.2
+ * @version 1.0.5
  * @since 1.0
  */
 class InfectionsSpider(queryDay: LocalDate) :
