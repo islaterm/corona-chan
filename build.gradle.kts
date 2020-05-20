@@ -1,14 +1,10 @@
-/**
- * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @since 1.0.1-a.1
- * @version 1.0
- */
 @file:Suppress("SpellCheckingInspection")
 
 import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 
 plugins {
-  kotlin("jvm") version "1.3.72"
+  kotlin("jvm") version "1.3.70"
+  kotlin("plugin.serialization") version "1.3.70"
 }
 
 group = "com.github.islaterm"
@@ -28,6 +24,9 @@ dependencies {
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.6")
   implementation(group = "com.github.kotlin-telegram-bot.kotlin-telegram-bot", name = "dispatcher", version = "4.4.0")
   implementation(group = "com.esotericsoftware.yamlbeans", name = "yamlbeans", version = "1.14")
+  implementation(group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-yaml", version = "2.11.0")
+  implementation(group = "com.fasterxml.jackson.datatype", name = "jackson-datatype-jsr310", version = "2.11.0")
+  implementation(group="com.fasterxml.jackson.module", name="jackson-module-kotlin", version = "2.11.0")
   implementation(group = "org.jsoup", name = "jsoup", version = "1.13.1")
   implementation(group = "org.apache.logging.log4j", name = "log4j-api", version = "2.13.3")
   implementation(group = "org.apache.logging.log4j", name = "log4j-core", version = "2.13.3")

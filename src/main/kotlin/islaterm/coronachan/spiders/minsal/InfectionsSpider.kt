@@ -6,6 +6,7 @@ import islaterm.coronachan.spiders.AbstractSpider
 import islaterm.coronachan.spiders.ROW_CELL
 import islaterm.coronachan.spiders.TABLE
 import islaterm.coronachan.spiders.TABLE_ROW
+import islaterm.coronachan.utils.IDayRecord
 import islaterm.coronachan.utils.kotly.GroupedBarChart
 import org.jsoup.select.Elements
 import java.io.File
@@ -16,11 +17,15 @@ import java.util.regex.Pattern
  * Web crawler for official information of the MINSAL.
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version 1.0.5-b.6
+ * @version 1.0.5-b.9
  * @since 1.0
  */
 class InfectionsSpider(queryDay: LocalDate) :
-  AbstractSpider("https://www.minsal.cl/nuevo-coronavirus-2019-ncov/casos-confirmados-en-chile-covid-19/", queryDay) {
+  AbstractSpider(
+    "https://www.minsal.cl/nuevo-coronavirus-2019-ncov/casos-confirmados-en-chile-covid-19/",
+    queryDay,
+    "infections.yml"
+  ) {
 
   private lateinit var footnote: String
   private val categories = mutableListOf<String>()
@@ -31,6 +36,7 @@ class InfectionsSpider(queryDay: LocalDate) :
 
   override fun scrape() {
     logger.info("Scrapping...")
+    super.getLastRecords(InfectionRecord::class.java)
     parseTable()
     getFootnote()
     parseYesterdayCSV()
@@ -137,3 +143,6 @@ class InfectionsSpider(queryDay: LocalDate) :
     logger.info("MINSAL spider is done with generating the plots")
   }
 }
+
+data class InfectionRecord(val place: String, val category: String, val value: Number, override val day: String) :
+  IDayRecord

@@ -1,13 +1,12 @@
 package islaterm.coronachan.spiders.minsal
 
-import com.esotericsoftware.yamlbeans.YamlReader
-import com.esotericsoftware.yamlbeans.YamlWriter
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import islaterm.coronachan.coronaChanVue
 import islaterm.coronachan.resources
 import islaterm.coronachan.spiders.AbstractSpider
-import java.io.File
-import java.io.FileNotFoundException
-import java.io.FileReader
+import islaterm.coronachan.utils.IDayRecord
 import java.io.FileWriter
 import java.time.LocalDate
 import java.util.regex.Pattern
@@ -16,53 +15,40 @@ import java.util.regex.Pattern
  * Web crawler for official information of the MINSAL on quarantine zones.
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version 1.0.5-b.7
+ * @version 1.0.5-b.9
  * @since 1.0
  */
 class QuarantineSpider(queryDay: LocalDate) :
-  AbstractSpider("https://www.minsal.cl/nuevo-coronavirus-2019-ncov/", queryDay) {
+  AbstractSpider("https://www.minsal.cl/nuevo-coronavirus-2019-ncov/", queryDay, "quarantines.yml") {
 
-  private lateinit var stay: List<String>
-  private lateinit var quit: List<String>
-  private lateinit var enter: List<String>
+  private lateinit var stay: List<QuarantineRecord?>
+  private lateinit var quit: List<QuarantineRecord?>
+  private lateinit var enter: List<QuarantineRecord?>
 
   override fun scrape() {
     logger.info("Scraping...")
-    val quarantinesFile = File("$resources\\quarantines.yml")
+    val lastRecord = getLastRecords(QuarantineRecord::class.java)
 
-    val reader = try {
-      YamlReader(FileReader(quarantinesFile))
-    } catch (e: FileNotFoundException) {
-      null
-    }
-    val lastRecord = reader?.read(Map::class.java)
-    val previousQuarantine: List<String>?
-    val latestQuarantine: List<String>
-    val previousDate = "${queryDay.minusDays(1)}"
+    var latestQuarantine = lastRecord.first
+    var previousQuarantine = lastRecord.second
 
-    if (lastRecord == null || lastRecord.keys.none { it == "$queryDay" }) {
-      previousQuarantine = (lastRecord?.get(previousDate) as? List<*>)?.filterIsInstance<String>()
+    if (latestQuarantine.isEmpty()
+      || latestQuarantine[0]?.day != "$queryDay" // All the records on the list should have the same date
+    ) {
+      previousQuarantine = latestQuarantine
 
       latestQuarantine = scrapeQuarantine()
-      FileWriter(quarantinesFile).use {
-        val writer = YamlWriter(it)
-        writer.write(mapOf("$queryDay" to latestQuarantine))
-        writer.write(mapOf(previousDate to previousQuarantine))
-        writer.close()
-      }
+      val mapper = ObjectMapper(YAMLFactory()).registerModule(KotlinModule())
+      val writer = mapper.writer().writeValues(storageFile)
+      latestQuarantine.forEach { zone -> writer.write(zone) }
+      previousQuarantine.forEach { zone -> writer.write(zone) }
       FileWriter("$resources\\tables\\quarantine_zones.csv", true).use { writer ->
         latestQuarantine.forEach { zone -> writer.append("$queryDay, $zone\r\n") }
       }
-    } else {
-      latestQuarantine = (lastRecord["$queryDay"] as List<*>).filterIsInstance<String>()
-      val yesterdayData = reader.read(Map::class.java)?.get(previousDate)
-      previousQuarantine = (yesterdayData as? List<*>)?.filterIsInstance<String>()
     }
 
-    reader?.close()
-
-    stay = (previousQuarantine?.intersect(latestQuarantine) ?: latestQuarantine).toList()
-    quit = previousQuarantine?.minus(stay) ?: listOf()
+    stay = previousQuarantine.intersect(latestQuarantine).toList()
+    quit = previousQuarantine.minus(stay)
     enter = latestQuarantine.minus(stay)
     logger.info("Done with scrapping")
   }
@@ -70,7 +56,7 @@ class QuarantineSpider(queryDay: LocalDate) :
   /**
    * Parses the document and returns a list with all the zones in quarantine for today.
    */
-  private fun scrapeQuarantine(): List<String> {
+  private fun scrapeQuarantine(): List<QuarantineRecord?> {
     var onQuarantineParagraph = false
     var quarantineZonesTxt = ""
     iterateParagraphs {
@@ -82,6 +68,7 @@ class QuarantineSpider(queryDay: LocalDate) :
       }
     }
     return quarantineZonesTxt.split(Pattern.compile("\\s*–\\s*").toRegex()).drop(1)
+      .map { QuarantineRecord(it, "${LocalDate.now()}") }
   }
 
   override fun generateDocuments() {
@@ -109,3 +96,8 @@ class QuarantineSpider(queryDay: LocalDate) :
   }
 }
 
+data class QuarantineRecord(val zone: String, override val day: String) : IDayRecord {
+  override fun equals(other: Any?) = other is QuarantineRecord && zone == other.zone
+  override fun hashCode() = zone.hashCode()
+  override fun toString() = zone
+}
