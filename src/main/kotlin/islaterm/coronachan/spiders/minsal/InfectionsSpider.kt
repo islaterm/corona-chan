@@ -1,6 +1,9 @@
 package islaterm.coronachan.spiders.minsal
 
 import islaterm.coronachan.coronaChanVue
+import islaterm.coronachan.coronaWebSrc
+import islaterm.coronachan.minsalVue
+import islaterm.coronachan.resources
 import islaterm.coronachan.spiders.AbstractSpider
 import islaterm.coronachan.spiders.ROW_CELL
 import islaterm.coronachan.spiders.TABLE
@@ -9,13 +12,14 @@ import islaterm.coronachan.utils.IDayRecord
 import islaterm.coronachan.utils.InfectionRecord
 import islaterm.coronachan.utils.InfectionTables
 import islaterm.coronachan.utils.kotly.GroupedBarChart
+import java.io.File
 import java.time.LocalDate
 
 /**
  * Web crawler for official information of the MINSAL.
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version 1.0.5
+ * @version 1.0.6-b.1
  * @since 1.0
  */
 class InfectionsSpider(queryDay: LocalDate) :
@@ -114,9 +118,15 @@ class InfectionsSpider(queryDay: LocalDate) :
     coronaChanVue.writeText(
       coronaChanVue.readText()
         .replace("'~graphics~'", graphicsLinks)
-        .replace("'~footnote~'", footnote)
     )
+    applyTemplate(minsalVue, "footnote", footnote)
     logger.info("Done with generating the plots")
+  }
+
+  private fun applyTemplate(filename: String, replace: String, with: String) {
+    File("$coronaWebSrc/$filename").writeText(
+      File("$resources/$filename").readText()
+        .replace("{~ $replace ~}", with))
   }
 
   private fun getRecordsByPlace(record: MutableList<IDayRecord?>): Map<String, Map<String, Number>> {

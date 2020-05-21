@@ -19,13 +19,16 @@ import kotlin.concurrent.schedule
 
 const val resources = "./src/main/resources"
 val vueTemplate by lazy { File("$resources/template.vue") }
-val coronaChanVue by lazy { File("../../corona-chan/src/components/CoronaChan.vue") }
+const val coronaWebSrc = "../../../../corona-chan/src"
+const val componentsDir = "components"
+const val minsalVue = "$componentsDir/Minsal.vue"
+val coronaChanVue by lazy { File("$coronaWebSrc/$componentsDir/CoronaChan.vue") }
 
 /**
  * Corona-chan is a high-school girl who likes to play with spiders.
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version v1.0.5
+ * @version v1.0.6-b.1
  * @since 1.0
  */
 fun main() {
