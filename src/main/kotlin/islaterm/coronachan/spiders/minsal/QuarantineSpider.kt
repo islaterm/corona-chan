@@ -1,9 +1,7 @@
 package islaterm.coronachan.spiders.minsal
 
-import islaterm.coronachan.coronaChanVue
 import islaterm.coronachan.spiders.AbstractSpider
-import islaterm.coronachan.utils.IDayRecord
-import islaterm.coronachan.utils.QuarantineRecord
+import islaterm.coronachan.utils.*
 import java.time.LocalDate
 import java.util.regex.Pattern
 
@@ -11,7 +9,7 @@ import java.util.regex.Pattern
  * Web crawler for official information of the MINSAL on quarantine zones.
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version 1.0.5
+ * @version 1.0.6-b2
  * @since 1.0
  */
 class QuarantineSpider(queryDay: LocalDate) :
@@ -49,26 +47,30 @@ class QuarantineSpider(queryDay: LocalDate) :
   }
 
   override fun generateDocuments() {
-    logger.info("Generating documents...")
-    val quarantineText = "{\n" +
-        "${
-        if (stay.isNotEmpty())
-          "${" ".repeat(12)} stay :['${stay.joinToString("', '")}'],\n"
-        else
-          ""
-        }${
-        if (enter.isNotEmpty())
-          "${" ".repeat(12)} enter :['${enter.joinToString("', '")}'],\n"
-        else
-          ""
-        }${
-        if (quit.isNotEmpty())
-          "${" ".repeat(12)} quit :['${quit.joinToString("', '")}'],\n"
-        else
-          ""
-        }" +
-        "${" ".repeat(10)}}\n"
-    coronaChanVue.writeText(coronaChanVue.readText().replace("'~quarantine~'", quarantineText))
+    logger.info("Initializing $quarantinesVue...")
+    initializeComponent(quarantinesVue)
+    logger.info("Writing documents into web UI")
+    applyTemplate(
+      quarantinesVue, "quarantines",
+      "{\n" +
+          "${
+          if (stay.isNotEmpty())
+            "${" ".repeat(12)} stay :['${stay.joinToString("', '")}'],\n"
+          else
+            ""
+          }${
+          if (enter.isNotEmpty())
+            "${" ".repeat(12)} enter :['${enter.joinToString("', '")}'],\n"
+          else
+            ""
+          }${
+          if (quit.isNotEmpty())
+            "${" ".repeat(12)} quit :['${quit.joinToString("', '")}'],\n"
+          else
+            ""
+          }" +
+          "${" ".repeat(10)}}\n"
+    )
     logger.info("Finished generating documents")
   }
 }

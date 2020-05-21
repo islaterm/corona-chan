@@ -1,25 +1,18 @@
 package islaterm.coronachan.spiders.minsal
 
-import islaterm.coronachan.coronaChanVue
-import islaterm.coronachan.coronaWebSrc
-import islaterm.coronachan.minsalVue
-import islaterm.coronachan.resources
 import islaterm.coronachan.spiders.AbstractSpider
 import islaterm.coronachan.spiders.ROW_CELL
 import islaterm.coronachan.spiders.TABLE
 import islaterm.coronachan.spiders.TABLE_ROW
-import islaterm.coronachan.utils.IDayRecord
-import islaterm.coronachan.utils.InfectionRecord
-import islaterm.coronachan.utils.InfectionTables
+import islaterm.coronachan.utils.*
 import islaterm.coronachan.utils.kotly.GroupedBarChart
-import java.io.File
 import java.time.LocalDate
 
 /**
  * Web crawler for official information of the MINSAL.
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version 1.0.6-b.1
+ * @version 1.0.6-b2
  * @since 1.0
  */
 class InfectionsSpider(queryDay: LocalDate) :
@@ -79,7 +72,7 @@ class InfectionsSpider(queryDay: LocalDate) :
 
   override fun generateDocuments() {
     logger.info("MINSAL spider is generating the plots")
-    var graphicsLinks = ""
+    var chartLinks = ""
     val latest = getRecordsByPlace(latestRecord)
     val previous = getRecordsByPlace(oldestRecord)
     val tableList = listOf(
@@ -104,7 +97,7 @@ class InfectionsSpider(queryDay: LocalDate) :
       chart.addData(yData = oldestData, name = previousDate)
         .addData(yData = latestData, name = "$queryDay")
       val target = "$table.html".replace("[*:%]".toRegex(), "").replace(" ", "_")
-      graphicsLinks += "{ text: '$table', href: '$target' },\r\n${" ".repeat(10)}"
+      chartLinks += "{ text: '$table', href: '$target' },\r\n${" ".repeat(10)}"
       outputToFile(chart.toHtml(), target)
       latest["Chile"]?.get(table)?.let { latestTotals.add(it) }
       previous["Chile"]?.get(table)?.let { prevTotals.add(it) }
@@ -113,20 +106,11 @@ class InfectionsSpider(queryDay: LocalDate) :
     chart.xData = tableList
     chart.addData(yData = prevTotals, name = previousDate)
       .addData(yData = latestTotals, name = "$queryDay")
-    graphicsLinks += "{ href: 'Totales+Chile.html', text: 'Totales Chile' }\r\n"
+    chartLinks += "{ href: 'Totales+Chile.html', text: 'Totales Chile' }\r\n"
     outputToFile(chart.toHtml(), "Totales+Chile.html")
-    coronaChanVue.writeText(
-      coronaChanVue.readText()
-        .replace("'~graphics~'", graphicsLinks)
-    )
+    applyTemplate(infectionsVue, "charts", chartLinks)
     applyTemplate(minsalVue, "footnote", footnote)
     logger.info("Done with generating the plots")
-  }
-
-  private fun applyTemplate(filename: String, replace: String, with: String) {
-    File("$coronaWebSrc/$filename").writeText(
-      File("$resources/$filename").readText()
-        .replace("{~ $replace ~}", with))
   }
 
   private fun getRecordsByPlace(record: MutableList<IDayRecord?>): Map<String, Map<String, Number>> {
@@ -145,4 +129,3 @@ class InfectionsSpider(queryDay: LocalDate) :
     return infections
   }
 }
-

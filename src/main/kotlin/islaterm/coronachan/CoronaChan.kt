@@ -7,22 +7,13 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.io.BufferedReader
-import java.io.File
 import java.io.InputStreamReader
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.*
-import java.util.regex.Pattern
 import kotlin.concurrent.schedule
 
-
-const val resources = "./src/main/resources"
-val vueTemplate by lazy { File("$resources/template.vue") }
-const val coronaWebSrc = "../../../../corona-chan/src"
-const val componentsDir = "components"
-const val minsalVue = "$componentsDir/Minsal.vue"
-val coronaChanVue by lazy { File("$coronaWebSrc/$componentsDir/CoronaChan.vue") }
 
 /**
  * Corona-chan is a high-school girl who likes to play with spiders.
@@ -56,7 +47,7 @@ fun main() {
  * Are they going to be able to get to school on time or are they going to get grounded?
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version v1.0.5
+ * @version 1.0.6-b2
  * @since 1.0
  */
 class CoronaChan {
@@ -76,9 +67,6 @@ class CoronaChan {
    * [corona-chan's website](https://islaterm-corona-chan.herokuapp.com).
    */
   fun run() {
-    coronaChanVue.writeText(
-      coronaChanVue.readText().replace(Pattern.compile("<script>(?s).*</script>").toRegex(), vueTemplate.readText())
-    )
     runBlocking {
       coroutineScope {
         spiders.forEach {

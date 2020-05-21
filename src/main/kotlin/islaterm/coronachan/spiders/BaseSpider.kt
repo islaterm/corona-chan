@@ -3,7 +3,7 @@ package islaterm.coronachan.spiders
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import islaterm.coronachan.resources
+import islaterm.coronachan.utils.resources
 import islaterm.coronachan.utils.IDayRecord
 import islaterm.coronachan.utils.LoggerKun
 import org.jsoup.Jsoup
@@ -21,7 +21,7 @@ const val ROW_CELL = "td"
  * Common interface for the Corona-Virus updates web crawlers.
  *
  * @author [Ignacio Slater Muñoz](islaterm@gmail.com)
- * @version 1.0.5
+ * @version 1.0.6-b2
  * @since 1.0
  */
 interface ICrownSpider {
@@ -29,6 +29,7 @@ interface ICrownSpider {
    * Scrapes a site for information related to Corona-Virus and saves the relevant information into the class' fields.
    */
   fun scrape()
+
   fun generateDocuments()
 }
 
